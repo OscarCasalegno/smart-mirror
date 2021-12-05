@@ -1,0 +1,89 @@
+
+:root {
+    --logo: #cfcf14;
+}
+
+.centered {
+    /*Title*/
+    text-align: center;
+    padding: 35vh 0;
+}
+.background-1 {
+    /*Background*/
+    background-image: url(mirror1.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    background-size: cover;
+    font-size: 150%;
+}
+
+.blue {
+    background-color: blue;
+    border: white;
+}
+
+.hover-red:hover {
+    background-color: var(--logo);
+    border-color: var(--logo);
+}
+
+.logo {
+    max-height: 7vh;
+    max-width: 7vh;
+    aspect-ratio: 1 / 1;
+}
+
+.title {
+    width: 100%;
+    padding: 6vh 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    font-family: 'Raleway','Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+}
+
+.title h1 {
+    font-weight: 100;
+    font-size: 250%;
+}
+
+.margin-top-2 {
+    margin-top: 2vh;
+}
+
+.video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3/2;
+}
+
+.card-custom {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+footer {
+    font-family: 'Raleway','Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    border-top: darkslategray dashed 1px;
+}
+
+footer p {
+    padding:1.6vh 0 0 1.5vh;
+}
+
+.pt-log {
+    padding-top: 30vh;
+}
+
+.readable {
+    background-color: rgba(0,0,0, 0.6);
+    width: 100%;
+}
