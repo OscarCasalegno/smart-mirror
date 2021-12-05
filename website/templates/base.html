@@ -9,6 +9,8 @@
     <!-- Personalized style -->
     <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='custom1.css') }}" >
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
     <title>
         {% block title %}
 
@@ -21,10 +23,10 @@
         <img src="{{ url_for('static', filename='logo.png') }}" alt="Our Logo" class="logo d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none display-6">
 
         <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-            <li><a href="{{ url_for('home_page') }}" class="nav-link px-2 link-secondary">Home</a></li>
-            <li><a href="#" class="nav-link px-2 link-dark">Features</a></li>
-            <li><a href="#" class="nav-link px-2 link-dark">About Us</a></li>
-            <li><a href="#" class="nav-link px-2 link-dark">Store</a></li>
+            <li><a href="{{ url_for('home_page') }}" class="nav-link px-2 link-dark nav-custom">Home</a></li>
+            <li><a href="#" class="nav-link px-2 link-dark nav-custom">Features</a></li>
+            <li><a href="#" class="nav-link px-2 link-dark nav-custom">About us</a></li>
+            <li><a href="#" class="nav-link px-2 link-dark nav-custom">Store</a></li>
         </ul>
 
         <div class="text-end">
@@ -54,7 +56,7 @@
 
 {% endblock %}
 <footer>
-    <p class="offset-1">Copyright &copy; 2021-2022 <strong>Cleveror Inc.</strong> All rights reserved.</p>
+    <p class="">Copyright &copy; 2021-2022 <strong>Cleveror Inc.</strong> All rights reserved.</p>
 </footer>
 
 <!-- Optional JavaScript -->

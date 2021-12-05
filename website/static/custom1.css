@@ -28,6 +28,16 @@
     border-color: var(--logo);
 }
 
+.nav-custom {
+    font-size: 140%;
+    border-bottom: white solid 2pt;
+}
+
+.nav-custom:hover {
+    border-bottom: var(--logo) solid 2pt;
+    color: var(--logo);
+}
+
 .logo {
     max-height: 7vh;
     max-width: 7vh;
@@ -79,11 +89,43 @@ footer p {
     padding:1.6vh 0 0 1.5vh;
 }
 
-.pt-log {
-    padding-top: 30vh;
+.mt-log {
+    margin-top: 25vh;
+}
+
+.mt-reg {
+    margin-top: 15vh;
 }
 
 .readable {
     background-color: rgba(0,0,0, 0.6);
     width: 100%;
+}
+
+.centered-form {
+    width: 90%;
+    min-width: 0;
+    padding: 2.5rem;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.5s linear 0s, border 0.5s linear 0s;
+}
+
+.centered-form:hover {
+    background-color: rgba(252,252,252,1);
+    border-color: rgba(200,200,200,1);
+}
+
+strong:hover{
+    color: var(--logo);
+}
+
+/* Follow only if width is >= 768px */
+@media (min-width: 768px) {
+    .centered-form {
+    width: 50%;
+    min-width: 500pt;
+    }
 }
