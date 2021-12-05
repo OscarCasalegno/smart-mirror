@@ -122,6 +122,14 @@ strong:hover{
     color: var(--logo);
 }
 
+.face {
+    border-radius: 30%;
+    aspect-ratio: 1;
+    width: 70%;
+    border: var(--logo) solid 3px;
+    margin-bottom: 2rem;
+}
+
 /* Follow only if width is >= 768px */
 @media (min-width: 768px) {
     .centered-form {
