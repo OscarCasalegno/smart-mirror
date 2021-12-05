@@ -2,7 +2,7 @@
 .centered {
     /*Title*/
     text-align: center;
-    padding: 37vh 0;
+    padding: 35vh 0;
     /*Background*/
     background-image: url(temp.jpg);
     background-repeat: no-repeat;
@@ -13,4 +13,10 @@
 
 #red {
     color: red;
+}
+
+.logo {
+    max-height: 5vmin;
+    max-width: 5vmin;
+    aspect-ratio: initial;
 }

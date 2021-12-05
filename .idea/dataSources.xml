@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:sqlite:C:\Users\lucad\PycharmProjects\smart-mirror\market\market.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="market [2]" uuid="b251cd4a-c340-4c26-a089-be1ee22078d5">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:C:\Users\lucad\PycharmProjects\smart-mirror\website\market.db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
