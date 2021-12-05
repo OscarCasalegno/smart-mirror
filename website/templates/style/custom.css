@@ -1,0 +1,14 @@
+
+.centered {
+	height: 100%;
+    padding: 15rem 0;
+    background-image: url(../img/temp.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    background-size: cover;
+}
+
+#red {
+    color: red; !important
+}
