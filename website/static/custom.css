@@ -1,8 +1,10 @@
 
 .centered {
-	height: 100%;
-    padding: 15rem 0;
-    background-image: url(../img/temp.jpg);
+    /*Title*/
+    text-align: center;
+    padding: 37vh 0;
+    /*Background*/
+    background-image: url(temp.jpg);
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center center;
@@ -10,5 +12,5 @@
 }
 
 #red {
-    color: red; !important
+    color: red;
 }
