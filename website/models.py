@@ -6,20 +6,49 @@ from flask_login import UserMixin
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+""" Note on db:
+
+1 to 1 relationship
+    mirrors = db.relationship('Mirror', backref='owned_user', lazy=True)    #backref creates the new property "owned_user" in the table Mirror
+    # mirrors is a list of mirrors related to the specific user (thanks to laze you have them already loaded) 
+    
+    In the mirror table i still have to declare the foreign key:
+    owner = db.Column(db.Integer(), db.ForeignKey('user.id'))       #user.id is table.lower() . key property of table
+
+n to n relationship
+        tags = db.Table('tags',
+            db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True),
+            db.Column('page_id', db.Integer, db.ForeignKey('page.id'), primary_key=True)
+        )           # name of the field                     reference           also key for this table
+        
+        class Page(db.Model):
+            id = db.Column(db.Integer, primary_key=True)
+            tags = db.relationship('Tag', secondary=tags, lazy='subquery', backref=db.backref('pages', lazy=True))
+        
+        class Tag(db.Model):
+            id = db.Column(db.Integer, primary_key=True)
+
+
+"For only {price}".format(price = 49)
+
+"Mirror {name}".format(name = self.name)
+"Mirror {0}".format(self.name)
+"""
+
+ac_mirrors = db.Table('ac_mirrors',
+            db.Column('mirror_id', db.Integer, db.ForeignKey('mirror.id'), primary_key=True),
+            db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+            db.Column('ownership', db.Boolean())
+        )
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(length=30), nullable=False, unique=True)
+    name = db.Column(db.String(length=30), nullable=False)      #TBD
+    surname = db.Column(db.String(length=30), nullable=False)   #TBD
     email_address = db.Column(db.String(length=50), nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
-    budget = db.Column(db.Integer(), nullable=False, default=1000)
-    items = db.relationship('Item', backref='owned_user', lazy=True)
-
-    @property
-    def prettier_budget(self):
-        if len(str(self.budget)) >= 4:
-            return '{str(self.budget)[:-3]},{str(self.budget)[-3:]}$'
-        else:
-            return "{self.budget}$"
+    mirrors = db.relationship('Mirror', secondary=ac_mirrors, lazy='subquery', backref=db.backref('users', lazy='subquery'))
 
     @property
     def password(self):
@@ -32,28 +61,11 @@ class User(db.Model, UserMixin):
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
 
-    def can_purchase(self, item_obj):
-        return self.budget >= item_obj.price
 
-    def can_sell(self, item_obj):
-        return item_obj in self.items
-
-class Item(db.Model):
+class Mirror(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(length=30), nullable=False, unique=True)
-    price = db.Column(db.Integer(), nullable=False)
-    barcode = db.Column(db.String(length=12), nullable=False, unique=True)
-    description = db.Column(db.String(length=1024), nullable=False, unique=True)
-    owner = db.Column(db.Integer(), db.ForeignKey('user.id'))
+    model = db.Column(db.String(length=40), nullable=False, unique=True)
+    location = db.Column(db.Integer(), nullable=False)  #TBD
+
     def __repr__(self):
-        return 'Item {self.name}'
-
-    def buy(self, user):
-        self.owner = user.id
-        user.budget -= self.price
-        db.session.commit()
-
-    def sell(self, user):
-        self.owner = None
-        user.budget += self.price
-        db.session.commit()
+        return "Mirror #{name}".format(name=self.name)

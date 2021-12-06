@@ -31,8 +31,8 @@
 
         <div class="text-end">
             {% if current_user.is_authenticated %}
-                <button type="button" class="btn btn-outline-primary me-2" onclick="location.href= '{{ url_for('') }}';">Manage</button>
-                <button type="button" class="btn btn-primary" onclick="location.href= '{{ url_for('Logout') }}';">Logout</button>
+                <button type="button" class="btn btn-outline-primary me-2" onclick="location.href= '{{ url_for('personal_page') }}';">Manage</button>
+                <button type="button" class="btn btn-primary" onclick="location.href= '{{ url_for('logout_page') }}';">Logout</button>
             {% else %}
                 <button type="button" class="btn btn-outline-primary me-2" onclick="location.href= '{{ url_for('login_page') }}';">Login</button>
                 <button type="button" class="btn btn-primary" onclick="location.href= '{{ url_for('register_page') }}';">Register</button>
@@ -40,6 +40,9 @@
         </div>
     </header>
 </div>
+
+<!-- Da sistemare!!!!! -->
+
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}

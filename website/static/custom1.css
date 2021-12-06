@@ -127,7 +127,7 @@ strong:hover{
     aspect-ratio: 1;
     width: 70%;
     border: var(--logo) solid 3px;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
 }
 
 /* Follow only if width is >= 768px */
