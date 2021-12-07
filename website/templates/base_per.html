@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap style -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"/>
+    <!-- Personalized style -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='custom.css') }}" >
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    <title>
+        {% block title %}
+
+        {% endblock %}
+    </title>
+</head>
+<body>
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Our Logo" class="logo d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none display-6">
+
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="{{ url_for('personal_page') }}" class="nav-link px-2 link-dark nav-custom">Personal</a></li>
+            <li><a href="#" class="nav-link px-2 link-dark nav-custom">Mirrors</a></li>
+            <li><a href="#" class="nav-link px-2 link-dark nav-custom">Layout</a></li>
+            <li><a href="{{ url_for('info_page') }}" class="nav-link px-2 link-dark nav-custom">Information</a></li>
+        </ul>
+
+        <div class="text-end">
+            <button type="button" class="btn btn-outline-primary me-2" onclick="location.href= '{{ url_for('home_page') }}';">Home</button>
+            <button type="button" class="btn btn-primary" onclick="location.href= '{{ url_for('logout_page') }}';">Logout</button>
+        </div>
+    </header>
+</div>
+<!-- Da mettere qui nome utente e co... -->
+
+
+<!-- Alert Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible">
+                <button type="button" class="m1-2 mb-1 btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+
+{% block content %}
+
+{% endblock %}
+<footer>
+    <p class="">Copyright &copy; 2021-2022 <strong>Cleveror Inc.</strong> All rights reserved.</p>
+</footer>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</body>
+</html>

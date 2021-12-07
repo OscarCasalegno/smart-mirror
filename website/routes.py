@@ -1,7 +1,7 @@
 from website import app, db
 from flask import render_template, redirect, url_for, flash, request
 from website.models import Mirror, User
-from website.forms import RegisterForm, LoginForm, PurchaseItemForm, SellItemForm
+from website.forms import RegisterForm, LoginForm, UpdateForm, PurchaseItemForm, SellItemForm
 from flask_login import login_user, logout_user, login_required, current_user
 
 @app.route('/')
@@ -49,7 +49,7 @@ def market_page():
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        user_to_create = User(name="a", surname="a", username=form.username.data,
+        user_to_create = User(name="Name", surname="Surname", username=form.username.data,
                               email_address=form.email_address.data,
                               password=form.password1.data)
         db.session.add(user_to_create)
@@ -93,6 +93,22 @@ def about_page():
 @app.route('/personal')
 def personal_page():
     return render_template('personal.html')
+
+@app.route('/info', methods=['GET', 'POST'])
+def info_page():
+    form = UpdateForm()
+    if form.validate_on_submit():
+        name = form.name.data;
+        surname = form.surname.data;
+        current_user.name = name
+        current_user.surname = surname
+
+        db.session.commit()
+
+        flash('Success! Your personal information have been updated!'.format(), category='success')
+        return redirect(url_for('personal_page'))
+
+    return render_template('user_info.html', form=form)
 
 
 

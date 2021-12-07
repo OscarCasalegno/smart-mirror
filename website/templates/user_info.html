@@ -1,0 +1,27 @@
+{% extends 'base_per.html' %}
+{% block title %}
+    My Info
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <form method="POST" class="centered-form mt-reg">
+            {{ form.hidden_tag() }}
+            <h2 class="pb-2">Your Personal Information</h2>
+
+            <input type="text" class="form-control mt-3" value="{{ current_user.username }}" readonly>
+            <input type="text" class="form-control mt-3" value="{{ current_user.email_address }}" readonly>
+
+            <div class="row">
+                <div class="col-md">  <!-- col divide in base a quanti sono i fratelli; col-x da un valore -->
+                    {{ form.name(class="form-control mt-3", value=current_user.name)  }}
+                </div>
+                <div class="col-md">
+                    {{ form.surname(class="form-control mt-3", value=current_user.surname)  }}
+                </div>
+            </div>
+
+            {{ form.submit(class="btn btn-lg btn-block btn-primary mt-4 center") }}
+        </form>
+    </div>
+    <div class="py-5"></div>
+{% endblock %}

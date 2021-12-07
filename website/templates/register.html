@@ -6,7 +6,7 @@
 {% block content %}
 <body class="text-center">
     <div class="container">
-        <form method="POST" class="form-register mt-reg centered-form">
+        <form method="POST" class="mt-reg centered-form">
             {{ form.hidden_tag() }}
             <h2 class="pb-2">Create here your Account</h2>
 
@@ -18,7 +18,7 @@
 
             {{ form.password2(class="form-control mt-3", placeholder="Confirm Password") }}
 
-            {{ form.submit(class="btn btn-lg btn-block btn-primary  mt-4") }}
+            {{ form.submit(class="btn btn-lg btn-block btn-primary mt-4") }}
         </form>
     </div>
     <div class="py-5"></div>

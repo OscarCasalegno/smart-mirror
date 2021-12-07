@@ -89,12 +89,24 @@ footer p {
     padding:1.6vh 0 0 1.5vh;
 }
 
+/*If width is < 576*/
 .mt-log {
-    margin-top: 25vh;
+    margin-top: 10vh;
 }
 
 .mt-reg {
-    margin-top: 15vh;
+    margin-top: 5vh;
+}
+
+/* Follow only if width is >= 768 */
+@media (min-width: 768px) {
+    .mt-log {
+        margin-top: 20vh;
+    }
+
+    .mt-reg {
+        margin-top: 15vh;
+    }
 }
 
 .readable {
@@ -111,6 +123,12 @@ footer p {
     margin-left: auto;
     margin-right: auto;
     transition: background-color 0.5s linear 0s, border 0.5s linear 0s;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
 }
 
 .centered-form:hover {

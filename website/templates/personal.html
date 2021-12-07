@@ -1,9 +1,9 @@
-{% extends 'base.html' %}  <!--Da creare nuova base per backend!!-->
+{% extends 'base_per.html' %}  <!--Da creare nuova base per backend!!-->
 {% block title %}
     Personal Page
 {% endblock %}
 {% block content %}
-    <h1> Ciao {{ current_user.name }}</h1>
+    <h1> Ciao {{ current_user.name }} {{ current_user.surname }}</h1>
     <h1> Ciao {{ current_user.username }}</h1>
     <h1> Ciao {{ current_user.email_address }}</h1>
 {% endblock %}

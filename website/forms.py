@@ -24,11 +24,18 @@ class RegisterForm(FlaskForm):
     password2 = PasswordField(label='Confirm Password:', validators=[EqualTo('password1'), DataRequired()])
     submit = SubmitField(label='Create Account')
 
-
 class LoginForm(FlaskForm):
     username = StringField(label='User Name:', validators=[DataRequired()])
     password = PasswordField(label='Password:', validators=[DataRequired()])
     submit = SubmitField(label='Sign in')
+
+class UpdateForm(FlaskForm):
+
+    #password = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
+    name = StringField(label='Name:', validators=[Length(min=2, max=30)])
+    surname = StringField(label='Surname:', validators=[Length(min=2, max=30)])
+    submit = SubmitField(label='Update Values')
+
 
 class PurchaseItemForm(FlaskForm):
     submit = SubmitField(label='Purchase Item!')
