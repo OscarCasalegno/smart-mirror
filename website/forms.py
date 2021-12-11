@@ -36,6 +36,15 @@ class UpdateForm(FlaskForm):
     surname = StringField(label='Surname:', validators=[Length(min=2, max=30)])
     submit = SubmitField(label='Update Values')
 
+class MirrorForm(FlaskForm):
+
+    #id = readonly field
+    #pw = readonly field
+    city = StringField(label='Name:', validators=[Length(min=2, max=30)])
+
+    surname = StringField(label='Surname:', validators=[Length(min=2, max=30)])
+    submit = SubmitField(label='Update Values')
+
 
 class PurchaseItemForm(FlaskForm):
     submit = SubmitField(label='Purchase Item!')
