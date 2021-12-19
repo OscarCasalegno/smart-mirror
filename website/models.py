@@ -1,6 +1,7 @@
 from website import db, login_manager
 from website import bcrypt
 from flask_login import UserMixin
+import pickle
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -41,6 +42,7 @@ ac_mirrors = db.Table('ac_mirrors',
             db.Column('ownership', db.Boolean())
         )
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(length=30), nullable=False, unique=True)
@@ -49,6 +51,7 @@ class User(db.Model, UserMixin):
     email_address = db.Column(db.String(length=50), nullable=False, unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
     mirrors = db.relationship('Mirror', secondary=ac_mirrors, lazy='subquery', backref=db.backref('users', lazy='subquery'))
+    credentials = db.Column(db.Text())
 
     @property
     def password(self):

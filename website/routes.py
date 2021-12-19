@@ -1,5 +1,7 @@
+import ast
 import json
 import os
+import pickle
 import sys
 
 import flask
@@ -37,7 +39,7 @@ def register_page():
     if form.validate_on_submit():
         user_to_create = User(name="Name", surname="Surname", username=form.username.data,
                               email_address=form.email_address.data,
-                              password=form.password1.data)
+                              password=form.password1.data, credentials="")
         db.session.add(user_to_create)
         db.session.commit()
         login_user(user_to_create)
@@ -90,6 +92,7 @@ def g_login_page():
             redirect_uri=request.base_url + "/callback",
             scope=SCOPES,       # https://developers.google.com/identity/protocols/oauth2/scopes   ["openid", "email", "profile", "https://www.googleapis.com/auth/calendar.readonly"]    , "https://www.googleapis.com/auth/calendar.events.readonly"
         )
+        print "URL 1: {}".format(request_uri)
         return redirect(request_uri)
     else:
         flash("Temporary impossible to connect to Google's servers, try again later!", category='danger')
@@ -97,7 +100,7 @@ def g_login_page():
 
 
 @app.route("/g_login/callback")
-def g_callback_page():
+def g_callback_page():  #Google send us a request on this page
     # Get authorization code Google sent back to you
     code = request.args.get("code")
     # print "This is the code: {}".format(code)
@@ -106,6 +109,7 @@ def g_callback_page():
     if google_provider_cfg:
         token_endpoint = google_provider_cfg["token_endpoint"]
         #print "1: {}\n2: {}".format(request.url, request.base_url)
+        print "URL 2: {}".format(request.url)
         # Prepare and send a request to get tokens! Yay tokens!
         token_url, headers, body = client.prepare_token_request(
             token_endpoint,                     # https://oauth2.googleapis.com/token
@@ -119,6 +123,7 @@ def g_callback_page():
             data=body,
             auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
         )
+        print token_response.json()
 
         # Parse the tokens!
         client.parse_request_body_response(json.dumps(token_response.json()))
@@ -149,7 +154,7 @@ def g_callback_page():
             else:
                 user_to_create = User(name=name, surname=surname, username=username,
                                       email_address=email,
-                                      password=os.urandom(15))
+                                      password=os.urandom(15), credentials="")
                 db.session.add(user_to_create)
                 db.session.commit()
                 login_user(user_to_create)
@@ -202,9 +207,6 @@ def info_page():
         return redirect(url_for('login_page'))
 
 
-
-
-
 @app.route('/aaa')
 def index():
     return print_index_table()
@@ -212,29 +214,42 @@ def index():
 
 @app.route('/test')
 def test_api_request():
-    if 'credentials' not in flask.session:
+    if not current_user.is_authenticated:
+        return flask.redirect(url_for("login_page"))
+
+    cred = current_user.credentials
+    if cred == "":
+        print "No Credentials! {}".format(cred)     # .format(flask.session.items())
         return flask.redirect('authorize')
     # Load credentials from the session.
-    credentials = google.oauth2.credentials.Credentials(
-        **flask.session['credentials'])
+    #print "Credenziali stringa: {}".format(cred)
+    json_cred = json.loads(cred)
+    #print "Credenziali nuove {}: ".format(json_cred)
+    credentials = google.oauth2.credentials.Credentials(**json_cred)          # (**flask.session['credentials'])
+    #credentials = google.oauth2.credentials.Credentials(credentials_to_dict(credentials))
+    #credentials = google.oauth2.credentials.Credentials(flask.session['credentials'])
 
-    print "Credentials: {}".format(credentials.to_json())
+    #credentials_sess = google.oauth2.credentials.Credentials(flask.session['credentials'])
+    print "Credentials db: {}".format(credentials.to_json())
+    #print "Credentials ss: {}".format(credentials_sess.to_json())
 
     calendar = googleapiclient.discovery.build(
         API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
     all_calendars = calendar.calendarList().list().execute()
-    calendar_id = all_calendars["items"][1]["id"]
+    calendar_id = "primary"  # all_calendars["items"][1]["id"]
 
-    events = calendar.events().list(calendarId=calendar_id, timeMin=datetime.utcnow().isoformat()+"Z").execute()
+    events = calendar.events().list(calendarId=calendar_id, timeMin=datetime.utcnow().isoformat()+"Z", singleEvents=True, orderBy="startTime").execute()
     print "Events: {}".format(events)
 
     # Save credentials back to session in case access token was refreshed.
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     flask.session['credentials'] = credentials_to_dict(credentials)
+    current_user.credentials = json.dumps(credentials_to_dict(credentials))
+    db.session.commit()
 
-    return flask.jsonify(**all_calendars)
+    return flask.jsonify(**events)  # all_calendars)
 
 
 @app.route('/authorize')
@@ -281,7 +296,14 @@ def oauth2callback():
     #              credentials in a persistent database instead.
     credentials = flow.credentials
     print "Flow: {}".format(flow.__dict__)
+
     flask.session['credentials'] = credentials_to_dict(credentials)
+    current_user.credentials = json.dumps(credentials_to_dict(credentials))
+    db.session.commit()
+
+    print "Database: {}".format(json.loads(current_user.credentials))
+    print "Session: {}".format(flask.session['credentials'])
+
 
     return flask.redirect(flask.url_for('test_api_request'))
 
@@ -308,6 +330,9 @@ def revoke():
 
 @app.route('/clear')
 def clear_credentials():
+    current_user.credentials = ""
+    db.session.commit()
+
     if 'credentials' in flask.session:
         del flask.session['credentials']
     return ('Credentials have been cleared.<br><br>' +
