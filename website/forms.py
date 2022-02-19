@@ -25,25 +25,38 @@ class RegisterForm(FlaskForm):
     submit = SubmitField(label='Create Account')
 
 class LoginForm(FlaskForm):
-    username = StringField(label='User Name:', validators=[DataRequired()])
+    email_address = StringField(label='Email Address:', validators=[DataRequired()])
     password = PasswordField(label='Password:', validators=[DataRequired()])
     submit = SubmitField(label='Sign in')
 
 class UpdateForm(FlaskForm):
-
     #password = PasswordField(label='Password:', validators=[Length(min=6), DataRequired()])
     name = StringField(label='Name:', validators=[Length(min=2, max=30)])
     surname = StringField(label='Surname:', validators=[Length(min=2, max=30)])
     submit = SubmitField(label='Update Values')
 
-class MirrorForm(FlaskForm):
+class AddMirrorForm(FlaskForm):
+    product_code = StringField(label='Product Code:', validators=[Length(min=2, max=30)])
+    secret_code = StringField(label='Secret Code:', validators=[Length(min=10, max=10)])
+    name = StringField(label='Name:', validators=[Length(max=40)])
 
-    #id = readonly field
-    #pw = readonly field
-    city = StringField(label='Name:', validators=[Length(min=2, max=30)])
+    country = StringField(label='Country:', validators=[Length(max=30)])
+    region = StringField(label='Region:', validators=[Length(max=30)])
+    city = StringField(label='City:', validators=[Length(max=30)])
+    address = StringField(label='Address:', validators=[Length(max=50)])
+    number = StringField(label='Number:', validators=[Length(max=6)])
+    postal_code = StringField(label='Postal Code:', validators=[Length(max=10)])
 
-    surname = StringField(label='Surname:', validators=[Length(min=2, max=30)])
-    submit = SubmitField(label='Update Values')
+    submit = SubmitField(label='Add Mirror')
+
+class EditMirrorForm(FlaskForm):
+    #product_code = StringField(label='Product Code:', validators=[Length(min=2, max=30)])
+    #secret_code = StringField(label='Secret Code:', validators=[Length(min=10, max=10)])
+
+    name = StringField(label='Name:', validators=[Length(max=40)])
+    location = StringField(label='Location:', validators=[Length(max=200)])
+
+    submit = SubmitField(label='Save Changes')
 
 
 class PurchaseItemForm(FlaskForm):

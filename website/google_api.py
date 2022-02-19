@@ -1,6 +1,7 @@
 import googlemaps
 import pandas as pd
 import json
+import geocoder
 
 
 def run():
@@ -16,22 +17,26 @@ def run():
     secret = f.readline().strip()
     f.close()
 
-    print "ID Client: {}\nClient Secret: {}".format(id, secret)
+    #print "ID Client: {}\nClient Secret: {}".format(id, secret)
 
-    """print "    \n\nciao amico\ncome va".strip()
-    print "\n    \nciao amico\ncome va".strip("\n")"""
+    #"""print "    \n\nciao amico\ncome va".strip()
+    #print "\n    \nciao amico\ncome va".strip("\n")"""
     #print type(my_key)
     # gmaps.directions("Sydney Town Hall", "Parramatta, NSW", mode="transit", departure_time=now)
 
-    #gmaps = googlemaps.Client(key=my_key)
+    gmaps = googlemaps.Client(key=my_key)
     #response = gmaps.distance_matrix(origins="albergo gli scoiattoli ceresole reale", destinations="Politecnico di Torino", mode="driving", language="it")
-    #print response
+    #print json.dumps(response)
 
-    #response = gmaps.places_autocomplete_query("corso Vinzaglio 3 Torino", language="en")
+    response = gmaps.places_autocomplete_query("corso Vinzaglio 3 Torino", language="en")
     #print response
-    
+    #print type(json.dumps(response))
+    print json.dumps(response)
+    print response[0]["description"]
+
     #raw_response = gmaps.geocode('1600 Amphitheatre Parkway, Mountain View, CA')
-    #print raw_response
+    #raw_response = gmaps.geocode("corso Vinzaglio 3 Torino")
+    #print json.dumps(raw_response)
     #print raw_response[0]["formatted_address"]
 
 
@@ -60,5 +65,14 @@ def run():
     print dataframe
     """
 
+def ciao():
+    g = geocoder.ip('me')
+    print(g.latlng)
+    print g.city
+    print g.state + " "
+    print g.country + " "
+
 if __name__ == '__main__':
+    #ciao()
     run()
+

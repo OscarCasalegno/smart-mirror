@@ -41,9 +41,9 @@ for direct in temp:
     uri_file = uri_file + direct + "\\"
     if direct == "website":
         break
-print uri_file
+#print uri_file
 uri_file = uri_file + "static\\secret\\client_secrets.json"
-print uri_file
+#print uri_file
 
 def get_google_provider_cfg():
     answer = requests.get(GOOGLE_DISCOVERY_URL)

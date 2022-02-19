@@ -1,0 +1,52 @@
+{% extends 'base_per.html' %}
+{% block title %}
+    My Mirrors
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h2 class="pb-2">Linked Mirrors:</h2>
+            </div>
+            <div class="col">
+                <a href="{{ url_for('add_mirror_page') }}" class="btn btn-lg btn-outline-secondary hover-red float-end">Add New
+                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+        <div class="table-margin">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <!-- Your Columns HERE -->
+                    <th scope="col">Id</th>
+                    <th scope="col">Mirror</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Users</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Your rows inside the table HERE: -->
+                {% for mirror in mirrors %}
+                    <tr>
+                        <td>{{ mirror.id }}</td>
+                        <td>{{ mirror.__repr__() }}</td>
+                        <td>{{ mirror.location }}</td>
+                        <td>{{ mirror.users }} {{ current_user in mirror.users }} {{ mirror.users[0].ownership == Null }} {{ mirror.users[0].ownership}}</td>
+                        <td>
+                            <button class="btn btn-outline-secondary"onclick="location.href= '{{ url_for('edit_mirror_page', mirror_id=mirror.id) }}';">Edit</button>
+                            <!--<button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo-{{ mirror.id }}">More Info</button>
+                                <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-PurchaseConfirm-{{ mirror.id }}">Purchase this Item</button>-->
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="py-5"></div>
+{% endblock %}

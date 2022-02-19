@@ -1,8 +1,5 @@
-import ast
 import json
 import os
-import pickle
-import sys
 
 import flask
 import googleapiclient
@@ -12,8 +9,9 @@ from flask_login import login_user, logout_user, current_user
 
 import website
 from website import app, db, get_google_provider_cfg, client, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-from website.forms import RegisterForm, LoginForm, UpdateForm
-from website.models import User
+from website.forms import RegisterForm, LoginForm, UpdateForm, AddMirrorForm, EditMirrorForm
+from website.models import User, Mirror
+from website import api_manager
 from website import google_calendar_api
 from pprint import pprint
 from datetime import datetime
@@ -23,8 +21,6 @@ import google_auth_oauthlib.flow
 
 CLIENT_SECRETS_FILE = website.uri_file
 SCOPES = ["openid", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/calendar.readonly"]
-API_SERVICE_NAME = "calendar"
-API_VERSION = "v3"
 
 
 @app.route('/')
@@ -37,9 +33,17 @@ def home_page():
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        user_to_create = User(name="Name", surname="Surname", username=form.username.data,
-                              email_address=form.email_address.data,
-                              password=form.password1.data, credentials="")
+
+        email = form.email_address.data
+        if not User.query.filter_by(email_address=email).first() is None:
+            flash("The email '{0}' is already registered in our systems, please login!".format(email), category='warning')
+            return redirect(url_for('login_page'))
+
+        if not User.query.filter_by(g_email_address=email).first() is None:
+            flash("The Google email '{0}' is already registered in our systems, please login with Google!".format(email), category='warning')
+            return redirect(url_for('login_page'))
+
+        user_to_create = User(name="Name", surname="Surname", username=form.username.data, email_address=email, password=form.password1.data, credentials="")
         db.session.add(user_to_create)
         db.session.commit()
         login_user(user_to_create)
@@ -57,7 +61,7 @@ def register_page():
 def login_page():
     form = LoginForm()
     if form.validate_on_submit():
-        attempted_user = User.query.filter_by(username=form.username.data).first()
+        attempted_user = User.query.filter_by(email_address=form.email_address.data).first()
         if attempted_user and attempted_user.check_password_correction(
                 attempted_password=form.password.data
         ):
@@ -79,96 +83,76 @@ def logout_page():
 
 @app.route("/g_login")
 def g_login_page():
-    # Find out what URL to hit for Google login
-    google_provider_cfg = get_google_provider_cfg()
-    if google_provider_cfg:
-        authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
 
-        # Use library to construct the request for Google login and provide
-        # scopes that let you retrieve user's profile from Google
-        print client.client_id
-        request_uri = client.prepare_request_uri(
-            authorization_endpoint,
-            redirect_uri=request.base_url + "/callback",
-            scope=SCOPES,       # https://developers.google.com/identity/protocols/oauth2/scopes   ["openid", "email", "profile", "https://www.googleapis.com/auth/calendar.readonly"]    , "https://www.googleapis.com/auth/calendar.events.readonly"
-        )
-        print "URL 1: {}".format(request_uri)
-        return redirect(request_uri)
-    else:
-        flash("Temporary impossible to connect to Google's servers, try again later!", category='danger')
-        return redirect(url_for("login_page"))
+    flow.redirect_uri = flask.url_for('g_callback_page', _external=True)  # Complete URI
+
+    authorization_url, state = flow.authorization_url(
+        access_type='offline',  # Enable to refresh an access token without re-prompting the user for permission
+        include_granted_scopes='true')  # Enable incremental authorization.
+
+    return flask.redirect(authorization_url)
 
 
 @app.route("/g_login/callback")
-def g_callback_page():  #Google send us a request on this page
-    # Get authorization code Google sent back to you
-    code = request.args.get("code")
-    # print "This is the code: {}".format(code)
-    # Find out what URL to hit to get tokens that allow you to ask for things on behalf of a user
-    google_provider_cfg = get_google_provider_cfg()
-    if google_provider_cfg:
-        token_endpoint = google_provider_cfg["token_endpoint"]
-        #print "1: {}\n2: {}".format(request.url, request.base_url)
-        print "URL 2: {}".format(request.url)
-        # Prepare and send a request to get tokens! Yay tokens!
-        token_url, headers, body = client.prepare_token_request(
-            token_endpoint,                     # https://oauth2.googleapis.com/token
-            authorization_response=request.url, # Full URI: (base + parameters)  https://127.0.0.1:5000/g_login/callback?code=4%2F0AX4XfWiCknLCuiB6U_0-U0aP2T2VFDasj297j-RS8B0Yn61deFfSWzJ0FtCQfaJX3aDShQ&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=0&prompt=consent
-            redirect_url=request.base_url,      # Base URI: https://127.0.0.1:5000/g_login/callback
-            code=code
-        )
-        token_response = requests.post(         # Nuova Richiesta
-            token_url,
-            headers=headers,
-            data=body,
-            auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
-        )
-        print token_response.json()
+def g_callback_page():
+    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
+    flow.redirect_uri = flask.url_for('g_callback_page', _external=True)
 
-        # Parse the tokens!
-        client.parse_request_body_response(json.dumps(token_response.json()))
-        # print "Token: {}".format(json.dumps(token_response.json()))
+    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
+    authorization_response = flask.request.url
+    #  Send back the received code to get an access token
+    flow.fetch_token(authorization_response=authorization_response)
 
-        # We have the tokens!!
-        # -> Follow URL from Google which gives us the user's profile information in scope
-        userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]  # https://openidconnect.googleapis.com/v1/userinfo
-        uri, headers, body = client.add_token(userinfo_endpoint)
-        userinfo_response = requests.get(uri, headers=headers, data=body)
-        # print userinfo_response.json()  # Dati
-        # print userinfo_response         # Risposta 200 (o altri codici brutti)
+    # Retrieve the credentials
+    credentials = flow.credentials
 
-        if userinfo_response.json().get("email_verified"):   # If the email is verified.
-            # unique_id = userinfo_response.json()["sub"]
-            email = userinfo_response.json()["email"]
-            username = email.split('@')[0].replace(".", "_")
-            name = userinfo_response.json()["given_name"]
-            surname = userinfo_response.json()["family_name"]
-            # picture = userinfo_response.json()["picture"]
-            # users_name = userinfo_response.json()["given_name"]
+    calendar = googleapiclient.discovery.build("calendar", "v3", credentials=credentials)
+    events = calendar.events().list(calendarId="primary", timeMin=datetime.utcnow().isoformat() + "Z",
+                                    singleEvents=True, orderBy="startTime").execute()
+    print "Events: {}".format(events)
 
-            attempted_user = User.query.filter_by(email_address=email).first()
-            if attempted_user:  # If user has already logged in
-                login_user(attempted_user)
-                flash('Success! You are logged in as: {0}'.format(attempted_user.username), category='success')
+    info_service = googleapiclient.discovery.build("people", "v1", credentials=credentials)
+    info = info_service.people().get(resourceName="people/me", personFields="names,emailAddresses,coverPhotos,photos").execute()
+    print "info: {}".format(info)
 
-            else:
-                user_to_create = User(name=name, surname=surname, username=username,
-                                      email_address=email,
-                                      password=os.urandom(15), credentials="")
-                db.session.add(user_to_create)
-                db.session.commit()
-                login_user(user_to_create)
-                flash("Account created successfully! You are now logged in as {0}".format(user_to_create.username), category='success')
+    g_email = info["emailAddresses"][0]["value"]
+    g_name = info["names"][0]["familyName"]
+    g_surname = info["names"][0]["givenName"]
+    g_username = g_email.split('@')[0].replace(".", "_")
+    g_picture = info["photos"][0]["url"]
+    g_credential = json.dumps(credentials_to_dict(credentials))
 
-            return redirect(url_for('personal_page'))
+    attempted_g_user = User.query.filter_by(g_email_address=g_email).first()
+    attempted_user = User.query.filter_by(email_address=g_email).first()
 
-        else:
-            flash("User email not available or not verified by Google!", category='danger')
-            return redirect(url_for("login_page"))
+    if attempted_g_user:  # If user has already logged in with Google
+        attempted_g_user.credentials = g_credential  # Update Credentials in DB as a string
+        db.session.commit()
+        login_user(attempted_g_user)  # Login User
+        flash('Success! You are logged in as: {0}'.format(attempted_g_user.username), category='success')
+
+    elif attempted_user:  # If user has already logged in, but not with Google
+        if attempted_user.g_email_address:
+            flash('An account using this email already exists, but it is linked to a different Google account. Login without Google!', category='danger')
+            return redirect(url_for('login_page'))
+
+        attempted_user.g_email_address = g_email
+        attempted_user.credentials = g_credential  # Update Credentials in DB as a string
+        db.session.commit()
+        login_user(attempted_user)  # Login User
+        flash('Success! You are logged in as: {0}, this account is now linked to Google!'.format(attempted_user.username), category='success')
 
     else:
-        flash("Temporary impossible to connect to Google's servers, try again later!", category='danger')
-        return redirect(url_for("login_page"))
+        user_to_create = User(name=g_name, surname=g_surname, username=g_username,
+                              email_address=g_email, g_email_address=g_email, password=os.urandom(15), credentials=g_credential)
+        db.session.add(user_to_create)
+        db.session.commit()
+        login_user(user_to_create)
+        flash("Account created successfully! You are now logged in as {0}".format(user_to_create.username), category='success')
+
+    return redirect(url_for('personal_page'))
 
 
 @app.route('/about')
@@ -207,9 +191,85 @@ def info_page():
         return redirect(url_for('login_page'))
 
 
-@app.route('/aaa')
-def index():
-    return print_index_table()
+@app.route('/mirrors')
+def mirrors_page():
+    if not current_user.is_authenticated:
+        flash("To see linked mirrors please authenticate yourself!", category='warning')
+        return flask.redirect(url_for("login_page"))
+
+    #owned_items = Item.query.filter_by(owner=current_user.id)
+    mirrors = Mirror.query.order_by(Mirror.id).all()
+
+    return render_template('mirrors.html', mirrors=mirrors)
+
+
+@app.route('/mirrors/add', methods=['GET', 'POST'])
+def add_mirror_page():
+    if not current_user.is_authenticated:
+        flash("To link a new mirror please authenticate yourself!", category='warning')
+        return flask.redirect(url_for("login_page"))
+
+    form = AddMirrorForm()
+    if form.validate_on_submit():
+
+        raw_location = form.address.data + " " + form.number.data + ", " + form.city.data + ", " + form.region.data + ", " + form.country.data + ", " + form.postal_code.data
+        print "Raw: "+raw_location
+        location = api_manager.get_address(raw_address=raw_location)
+        print "New: "+location
+
+        #Add check if already inserted---- OWNER!!!
+        check_mirror = Mirror.query.filter_by(product_code=form.product_code.data, secret_code=form.secret_code.data).first()
+        if check_mirror is not None:
+            flash('The mirror {} has already been inserted!'.format(form.product_code.data),category='warning')
+            return redirect(url_for('mirrors_page'))
+
+        mirror_to_create = Mirror(product_code=form.product_code.data, secret_code=form.secret_code.data, location=location, name=form.name.data)
+        mirror_to_create.users.append(current_user)
+        db.session.add(mirror_to_create)
+        db.session.commit()
+
+        flash('Success! Your account is now linked to the mirror {}!'.format(form.product_code.data), category='success')
+        return redirect(url_for('mirrors_page'))
+
+    if form.errors != {}: #If there are errors from the validations
+        for err_msg in form.errors.values():
+            flash('Error during the process: {0}'.format(err_msg[0]), category='danger')
+
+    return render_template("add_mirror.html", form=form)
+
+
+@app.route('/mirrors/edit/<mirror_id>', methods=['GET', 'POST'])
+def edit_mirror_page(mirror_id):
+    if not current_user.is_authenticated:
+        flash("To edit a mirror please authenticate yourself!", category='warning')
+        return flask.redirect(url_for("login_page"))
+
+    # Retrieve the mirror (handling errors)
+    mirror = Mirror.query.filter_by(id=mirror_id).first()
+    if mirror is None:
+        flash("No such mirror in our BD, try to register the mirror first!", category='warning')
+        return flask.redirect(url_for("mirrors_page"))
+
+    #if not mirror.users.contains(current_user):
+    #    flash("You are not authorized to edit this mirror, please register it first!", category='warning')
+    #    return flask.redirect(url_for("mirrors_page"))
+    form = EditMirrorForm()
+
+    if form.validate_on_submit():
+
+        mirror.location = api_manager.get_address(raw_address=form.location.data)
+        mirror.name = form.name.data
+        db.session.commit()
+
+        flash('Success! Your changes on {} have been saved!'.format(mirror.product_code), category='success')
+        return redirect(url_for('mirrors_page'))
+
+    if form.errors != {}: #If there are errors from the validations
+        for err_msg in form.errors.values():
+            flash('Error during the process: {0}'.format(err_msg[0]), category='danger')
+
+    return render_template("edit_mirror.html", form=form, mirror=mirror)
+
 
 
 @app.route('/test')
@@ -233,14 +293,22 @@ def test_api_request():
     print "Credentials db: {}".format(credentials.to_json())
     #print "Credentials ss: {}".format(credentials_sess.to_json())
 
-    calendar = googleapiclient.discovery.build(
-        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+    calendar = googleapiclient.discovery.build("calendar", "v3", credentials=credentials)
 
     all_calendars = calendar.calendarList().list().execute()
     calendar_id = "primary"  # all_calendars["items"][1]["id"]
 
     events = calendar.events().list(calendarId=calendar_id, timeMin=datetime.utcnow().isoformat()+"Z", singleEvents=True, orderBy="startTime").execute()
     print "Events: {}".format(events)
+
+    info_service = googleapiclient.discovery.build("people", "v1", credentials=credentials)
+    info = info_service.people().get(resourceName="people/me", personFields="names,emailAddresses,coverPhotos,photos").execute()
+    print "info: {}".format(info)
+    #print type(info)
+
+    print info["emailAddresses"][0]["value"]
+    print info["names"][0]["familyName"]
+    print info["names"][0]["givenName"]
 
     # Save credentials back to session in case access token was refreshed.
     # ACTION ITEM: In a production app, you likely want to save these
@@ -249,63 +317,7 @@ def test_api_request():
     current_user.credentials = json.dumps(credentials_to_dict(credentials))
     db.session.commit()
 
-    return flask.jsonify(**events)  # all_calendars)
-
-
-@app.route('/authorize')
-def authorize():
-    # Create flow instance to manage the OAuth 2.0 Authorization Grant Flow steps.
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE, scopes=SCOPES)
-
-    # The URI created here must exactly match one of the authorized redirect URIs
-    # for the OAuth 2.0 client, which you configured in the API Console. If this
-    # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
-    # error.
-    flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
-
-    authorization_url, state = flow.authorization_url(
-        # Enable offline access so that you can refresh an access token without
-        # re-prompting the user for permission. Recommended for web server apps.
-        access_type='offline',
-        # Enable incremental authorization. Recommended as a best practice.
-        include_granted_scopes='true')
-
-    # Store the state so the callback can verify the auth server response.
-    # flask.session['state'] = state
-
-    return flask.redirect(authorization_url)
-
-
-@app.route('/oauth2callback')
-def oauth2callback():
-    # Specify the state when creating the flow in the callback so that it can
-    # verified in the authorization server response.
-    # state = flask.session['state']
-
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE, scopes=SCOPES) #, state=state
-    flow.redirect_uri = flask.url_for('oauth2callback', _external=True)
-
-    # Use the authorization server's response to fetch the OAuth 2.0 tokens.
-    authorization_response = flask.request.url
-    flow.fetch_token(authorization_response=authorization_response)
-
-    # Store credentials in the session.
-    # ACTION ITEM: In a production app, you likely want to save these
-    #              credentials in a persistent database instead.
-    credentials = flow.credentials
-    print "Flow: {}".format(flow.__dict__)
-
-    flask.session['credentials'] = credentials_to_dict(credentials)
-    current_user.credentials = json.dumps(credentials_to_dict(credentials))
-    db.session.commit()
-
-    print "Database: {}".format(json.loads(current_user.credentials))
-    print "Session: {}".format(flask.session['credentials'])
-
-
-    return flask.redirect(flask.url_for('test_api_request'))
+    return flask.jsonify(**info)  # flask.jsonify(**events)  # all_calendars)
 
 
 @app.route('/revoke')
@@ -319,13 +331,13 @@ def revoke():
 
     revoke = requests.post('https://oauth2.googleapis.com/revoke',
                            params={'token': credentials.token},
-                           headers = {'content-type': 'application/x-www-form-urlencoded'})
+                           headers={'content-type': 'application/x-www-form-urlencoded'})
 
     status_code = getattr(revoke, 'status_code')
     if status_code == 200:
-        return('Credentials successfully revoked.' + print_index_table())
+        return('Credentials successfully revoked.')
     else:
-        return('An error occurred.' + print_index_table())
+        return('An error occurred.')
 
 
 @app.route('/clear')
@@ -335,8 +347,7 @@ def clear_credentials():
 
     if 'credentials' in flask.session:
         del flask.session['credentials']
-    return ('Credentials have been cleared.<br><br>' +
-            print_index_table())
+    return ('Credentials have been cleared')
 
 
 def credentials_to_dict(credentials):
@@ -346,31 +357,4 @@ def credentials_to_dict(credentials):
             'client_id': credentials.client_id,
             'client_secret': credentials.client_secret,
             'scopes': credentials.scopes}
-
-def print_index_table():
-    return ('<table>' +
-            '<tr><td><a href="/test">Test an API request</a></td>' +
-            '<td>Submit an API request and see a formatted JSON response. ' +
-            '    Go through the authorization flow if there are no stored ' +
-            '    credentials for the user.</td></tr>' +
-            '<tr><td><a href="/authorize">Test the auth flow directly</a></td>' +
-            '<td>Go directly to the authorization flow. If there are stored ' +
-            '    credentials, you still might not be prompted to reauthorize ' +
-            '    the application.</td></tr>' +
-            '<tr><td><a href="/revoke">Revoke current credentials</a></td>' +
-            '<td>Revoke the access token associated with the current user ' +
-            '    session. After revoking credentials, if you go to the test ' +
-            '    page, you should see an <code>invalid_grant</code> error.' +
-            '</td></tr>' +
-            '<tr><td><a href="/clear">Clear Flask session credentials</a></td>' +
-            '<td>Clear the access token currently stored in the user session. ' +
-            '    After clearing the token, if you <a href="/test">test the ' +
-            '    API request</a> again, you should go back to the auth flow.' +
-            '</td></tr></table>')
-
-
-
-
-
-
 

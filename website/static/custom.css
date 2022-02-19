@@ -148,6 +148,18 @@ strong:hover{
     margin-bottom: 3rem;
 }
 
+.form-label {
+    margin-top: 15pt;
+    margin-bottom: 0;
+    font-weight: bold;
+    color: darkslategray;
+}
+
+.table-margin {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
 /* Follow only if width is >= 768px */
 @media (min-width: 768px) {
     .centered-form {
