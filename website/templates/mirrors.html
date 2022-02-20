@@ -25,22 +25,21 @@
                     <th scope="col">Id</th>
                     <th scope="col">Mirror</th>
                     <th scope="col">Location</th>
-                    <th scope="col">Users</th>
+                    <th scope="col">Role</th>
                     <th scope="col"></th>
                 </tr>
                 </thead>
                 <tbody>
                 <!-- Your rows inside the table HERE: -->
-                {% for mirror in mirrors %}
+                {% for relation in mirrors %}
                     <tr>
-                        <td>{{ mirror.id }}</td>
-                        <td>{{ mirror.__repr__() }}</td>
-                        <td>{{ mirror.location }}</td>
-                        <td>{{ mirror.users }} {{ current_user in mirror.users }} {{ mirror.users[0].ownership == Null }} {{ mirror.users[0].ownership}}</td>
+                        <td>{{ relation.mirror.id }}</td>
+                        <td>{{ relation.mirror.__repr__() }}</td>
+                        <td>{{ "Installed!" if relation.mirror.location else "No Address!" }}</td>
+                        <td>{{ "Owner" if relation.ownership else "User" }}</td> <!--{{relation.mirror.users }}: {{current_user in relation.mirror.users }}-->
                         <td>
-                            <button class="btn btn-outline-secondary"onclick="location.href= '{{ url_for('edit_mirror_page', mirror_id=mirror.id) }}';">Edit</button>
-                            <!--<button class="btn btn-outline btn-info" data-toggle="modal" data-target="#Modal-MoreInfo-{{ mirror.id }}">More Info</button>
-                                <button class="btn btn-outline btn-success" data-toggle="modal" data-target="#Modal-PurchaseConfirm-{{ mirror.id }}">Purchase this Item</button>-->
+                            <button class="btn btn-{{ "primary" if relation.ownership else "outline-secondary" }}" onclick="location.href= '{{ url_for('edit_mirror_page', mirror_id=relation.mirror.id) }}';">
+                                {{ "Edit" if relation.ownership else "Info" }} </button>
                         </td>
                     </tr>
                 {% endfor %}

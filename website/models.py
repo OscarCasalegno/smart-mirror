@@ -1,3 +1,4 @@
+from sqlalchemy.orm import relationship, backref
 from website import db, login_manager
 from website import bcrypt
 from flask_login import UserMixin
@@ -7,13 +8,15 @@ import pickle
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-ac_mirrors = db.Table('ac_mirrors',
-            db.Column('mirror_id', db.Integer, db.ForeignKey('mirror.id'), primary_key=True),
-            db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-            db.Column('ownership', db.Boolean(), default=False)
-        )
 # current_user.mirrors.append(new_mirror)
 # db.session.commit()
+
+#user = User.query.first()
+#user.products  # List all products, eg [<productA>, <productB> ]
+#user.orders    # List all orders, eg [<order1>, <order2>]
+#user.orders[0].products  # List products from the first order
+#p1 = Product.query.first()
+#p1.users  # List all users who have bought this product, eg [<user1>, <user2>]
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
@@ -25,7 +28,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(length=60), nullable=False)
     credentials = db.Column(db.Text())
     face_details = db.Column(db.LargeBinary)
-    mirrors = db.relationship('Mirror', secondary=ac_mirrors, backref=db.backref('users'))
+    mirrors = relationship("Mirror", secondary="relations", backref=db.backref('users'))
 
     def __repr__(self):
         return "{username}".format(username=self.username)
@@ -53,12 +56,31 @@ class Mirror(db.Model):
     preferences = db.Column(db.Text())
     location = db.Column(db.Text())
     name = db.Column(db.String(length=40))
+    #users = relationship("User", secondary="relations", back_populates="mirrors") #Already in User
 
     def __repr__(self):
         return self.name if self.name != "" else self.product_code
 
     def __str__(self):
         return "Mirror: {name}".format(name=self.__repr__())
+
+
+class Relation(db.Model):
+    __tablename__ = 'relations'
+    mirror_id = db.Column(db.Integer, db.ForeignKey('mirror.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    ownership = db.Column(db.Boolean(), default=False)
+
+    user = relationship(User, backref=backref("related", cascade="all, delete-orphan"))
+    mirror = relationship(Mirror, backref=backref("related", cascade="all, delete-orphan"))
+
+    def __repr__(self):
+        return "[ {user} - {mirror} ]".format(user=self.user.__repr__(), mirror=self.mirror.__repr__())
+
+    def __str__(self):
+        return "R( U: {user} M: {mirror} )".format(user=self.user.__repr__(), mirror=self.mirror.__repr__())
+
+
 
 """
 from website import db

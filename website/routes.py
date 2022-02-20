@@ -6,11 +6,12 @@ import googleapiclient
 import requests
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
+from sqlalchemy.sql.operators import mirror
 
 import website
 from website import app, db, get_google_provider_cfg, client, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 from website.forms import RegisterForm, LoginForm, UpdateForm, AddMirrorForm, EditMirrorForm
-from website.models import User, Mirror
+from website.models import User, Mirror, Relation
 from website import api_manager
 from website import google_calendar_api
 from pprint import pprint
@@ -198,9 +199,14 @@ def mirrors_page():
         return flask.redirect(url_for("login_page"))
 
     #owned_items = Item.query.filter_by(owner=current_user.id)
-    mirrors = Mirror.query.order_by(Mirror.id).all()
+    related_mirrors = current_user.related
 
-    return render_template('mirrors.html', mirrors=mirrors)
+    def ordinator(relation):
+        return 1 if relation.ownership else 0
+
+    related_mirrors.sort(reverse=True, key=ordinator)
+
+    return render_template('mirrors.html', mirrors=related_mirrors)
 
 
 @app.route('/mirrors/add', methods=['GET', 'POST'])
@@ -213,9 +219,9 @@ def add_mirror_page():
     if form.validate_on_submit():
 
         raw_location = form.address.data + " " + form.number.data + ", " + form.city.data + ", " + form.region.data + ", " + form.country.data + ", " + form.postal_code.data
-        print "Raw: "+raw_location
+        #print "Raw: "+raw_location
         location = api_manager.get_address(raw_address=raw_location)
-        print "New: "+location
+        #print "New: "+location
 
         #Add check if already inserted---- OWNER!!!
         check_mirror = Mirror.query.filter_by(product_code=form.product_code.data, secret_code=form.secret_code.data).first()
@@ -227,6 +233,10 @@ def add_mirror_page():
         mirror_to_create.users.append(current_user)
         db.session.add(mirror_to_create)
         db.session.commit()
+        relation = Relation.query.filter_by(user=current_user, mirror=mirror_to_create).first()  # Get the relation
+        if relation:                    # Assign the ownership of the mirror to the current user
+            relation.ownership = True
+            db.session.commit()
 
         flash('Success! Your account is now linked to the mirror {}!'.format(form.product_code.data), category='success')
         return redirect(url_for('mirrors_page'))
@@ -250,14 +260,16 @@ def edit_mirror_page(mirror_id):
         flash("No such mirror in our BD, try to register the mirror first!", category='warning')
         return flask.redirect(url_for("mirrors_page"))
 
-    #if not mirror.users.contains(current_user):
-    #    flash("You are not authorized to edit this mirror, please register it first!", category='warning')
-    #    return flask.redirect(url_for("mirrors_page"))
+    relation = Relation.query.filter_by(mirror=mirror, user=current_user).first()
+    if relation is None:
+        flash("You are not authorized to view this mirror, please register it first!", category='warning')
+        return flask.redirect(url_for("mirrors_page"))
+
     form = EditMirrorForm()
 
     if form.validate_on_submit():
-
-        mirror.location = api_manager.get_address(raw_address=form.location.data)
+        if form.location.data and form.location.data != mirror.location:
+            mirror.location = api_manager.get_address(raw_address=form.location.data)
         mirror.name = form.name.data
         db.session.commit()
 
@@ -268,7 +280,7 @@ def edit_mirror_page(mirror_id):
         for err_msg in form.errors.values():
             flash('Error during the process: {0}'.format(err_msg[0]), category='danger')
 
-    return render_template("edit_mirror.html", form=form, mirror=mirror)
+    return render_template("edit_mirror.html", form=form, relation=relation)
 
 
 

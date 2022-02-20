@@ -6,21 +6,27 @@
     <div class="container">
         <form method="POST" class="mt-reg centered-form">
             {{ form.hidden_tag() }}
-            <h2 class="pb-2">Edit Mirror {{ mirror.__repr__() }}</h2>
+            <h2 class="pb-2">Edit Mirror {{ relation.mirror.__repr__() }}</h2>
             <p class="form-label">Information:</p>
             <div class="row">
                 <div class="col-md">
-                    <input type="text" class="form-control mt-3" value="{{ mirror.product_code }}" readonly>
+                    <input type="text" class="form-control mt-3" value="{{ relation.mirror.product_code }}" readonly>
                 </div>
                 <div class="col-md">
-                     <input type="text" class="form-control mt-3" value="{{ mirror.secret_code }}" readonly>
+                     <input type="text" class="form-control mt-3" value="{{ relation.mirror.secret_code }}" readonly>
                 </div>
             </div>
-            {{ form.name(class="form-control mt-3", placeholder="Name", value=mirror.name) }}
-            <p class="form-label">Location:</p>
-            {{ form.location(class="form-control mt-3", placeholder="Location", value=mirror.location) }}
 
+            {{ form.name(class="form-control mt-3", placeholder="Name", value=relation.mirror.name, disabled=(not relation.ownership)) }}
+            <p class="form-label">Location:</p>
+            {{ form.location(class="form-control mt-3", placeholder="Location", value=relation.mirror.location, disabled=(not relation.ownership)) }}
+
+            {% if  relation.ownership%}
             {{ form.submit(class="btn btn-lg btn-block btn-primary mt-4 center") }}
+            {% else %}
+                <a class="btn btn-lg btn-outline-secondary mt-4 center" href="{{ url_for('mirrors_page') }}">Return to List</a>
+            {% endif %}
+            </tr>
         </form>
     </div>
     <div class="py-5"></div>
