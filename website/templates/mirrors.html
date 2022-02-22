@@ -17,7 +17,7 @@
                 </a>
             </div>
         </div>
-        <div class="table-margin">
+        <div class="table-margin table-responsive">
             <table class="table table-hover">
                 <thead>
                 <tr>
@@ -25,6 +25,8 @@
                     <th scope="col">Id</th>
                     <th scope="col">Mirror</th>
                     <th scope="col">Location</th>
+                    <th scope="col">Owner</th>
+                    <th scope="col">#Users</th>
                     <th scope="col">Role</th>
                     <th scope="col"></th>
                 </tr>
@@ -35,7 +37,17 @@
                     <tr>
                         <td>{{ relation.mirror.id }}</td>
                         <td>{{ relation.mirror.__repr__() }}</td>
-                        <td>{{ "Installed!" if relation.mirror.location else "No Address!" }}</td>
+                        <td>{{ relation.mirror.get_location_lim(37) if relation.mirror.location else "No Address!" }}</td>
+
+                        {% if not relation.mirror.get_owner()%}
+                            <td>None</td>
+                        {% elif relation.mirror.get_owner()[0].user == current_user %}
+                            <td>{{ relation.mirror.get_owner()[0].user.email_address }} (You)</td>
+                        {% else %}
+                            <td> {{ relation.mirror.get_owner()[0].user.email_address }} </td>
+                        {% endif %}
+
+                        <td>{{ relation.mirror.get_users_number() }} </td>
                         <td>{{ "Owner" if relation.ownership else "User" }}</td> <!--{{relation.mirror.users }}: {{current_user in relation.mirror.users }}-->
                         <td>
                             <button class="btn btn-{{ "primary" if relation.ownership else "outline-secondary" }}" onclick="location.href= '{{ url_for('edit_mirror_page', mirror_id=relation.mirror.id) }}';">

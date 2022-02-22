@@ -21,8 +21,8 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(length=30), nullable=False, unique=True)
-    name = db.Column(db.String(length=30), nullable=False)      #TBD
-    surname = db.Column(db.String(length=30), nullable=False)   #TBD
+    name = db.Column(db.String(length=30))      #TBD
+    surname = db.Column(db.String(length=30))   #TBD
     email_address = db.Column(db.String(length=50), nullable=False, unique=True)
     g_email_address = db.Column(db.String(length=50), unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)
@@ -57,6 +57,18 @@ class Mirror(db.Model):
     location = db.Column(db.Text())
     name = db.Column(db.String(length=40))
     #users = relationship("User", secondary="relations", back_populates="mirrors") #Already in User
+
+    def get_owner(self):
+        relations = self.related
+        owner_iterator = filter(lambda rel: rel.ownership, relations)
+        return list(owner_iterator)
+
+    def get_users_number(self):
+        n = len(self.users)
+        return "{} users".format(n) if n != 1 else "{} user".format(n)
+
+    def get_location_lim(self, n):
+        return (self.location[:n:].strip()+"..." if len(self.location) > n+3 else self.location).strip()
 
     def __repr__(self):
         return self.name if self.name != "" else self.product_code

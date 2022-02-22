@@ -13,7 +13,7 @@
                     <input type="text" class="form-control mt-3" value="{{ relation.mirror.product_code }}" readonly>
                 </div>
                 <div class="col-md">
-                     <input type="text" class="form-control mt-3" value="{{ relation.mirror.secret_code }}" readonly>
+                     <input type="text" class="form-control mt-3" value="{{ relation.mirror.secret_code if relation.ownership else "**********" }}" readonly>
                 </div>
             </div>
 

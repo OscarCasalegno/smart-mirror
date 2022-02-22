@@ -4,45 +4,63 @@
 {% endblock %}
 {% block content %}
     <div class="container">
-        <form method="POST" class="mt-reg centered-form">
-            {{ form.hidden_tag() }}
-            <h2 class="pb-2">Register New Mirror</h2>
-            <p class="form-label">Information:</p>
-            <div class="row">
-                <div class="col-md">
-                    {{ form.product_code(class="form-control mt-3", placeholder="Product Code") }}
-                </div>
-                <div class="col-md">
-                    {{ form.secret_code(class="form-control mt-3", placeholder="Secret Code") }}
-                </div>
-            </div>
-            {{ form.name(class="form-control mt-3", placeholder="Name") }}
-            <p class="form-label">Location:</p>
-            <div class="row">
-                <div class="col-md">
-                    {{ form.country(class="form-control mt-3", placeholder="Country") }}
-                </div>
-                <div class="col-md">
-                    {{ form.region(class="form-control mt-3", placeholder="Region") }}
-                </div>
-                <div class="col-md">
-                    {{ form.city(class="form-control mt-3", placeholder="City") }}
-                </div>
-            </div>
+        <div class="row">
+            <div class="col-lg">
 
-            {{ form.address(class="form-control mt-3", placeholder="Address") }}
+                <form method="POST" class="mt-reg doubled-form col">
+                    {{ register_form.hidden_tag() }}
+                    <h2 class="pb-2">Register New Mirror</h2>
+                    <p class="form-label">Information:</p>
+                    <div class="row">
+                        <div class="col-md">
+                            {{ register_form.product_code(class="form-control mt-3", placeholder="Product Code") }}
+                        </div>
+                        <div class="col-md">
+                            {{ register_form.secret_code(class="form-control mt-3", placeholder="Secret Code") }}
+                        </div>
+                    </div>
+                    {{ register_form.name(class="form-control mt-3", placeholder="Name") }}
+                    <p class="form-label">Location:</p>
+                    <div class="row">
+                        <div class="col-md">
+                            {{ register_form.country(class="form-control mt-3", placeholder="Country") }}
+                        </div>
+                        <div class="col-md">
+                            {{ register_form.region(class="form-control mt-3", placeholder="Region") }}
+                        </div>
+                        <div class="col-md">
+                            {{ register_form.city(class="form-control mt-3", placeholder="City") }}
+                        </div>
+                    </div>
 
-            <div class="row">
-                <div class="col-md">
-                    {{ form.number(class="form-control mt-3", placeholder="Number") }}
-                </div>
-                <div class="col-md">
-                    {{ form.postal_code(class="form-control mt-3", placeholder="Postal Code") }}
-                </div>
+                    {{ register_form.address(class="form-control mt-3", placeholder="Address") }}
+
+                    <div class="row">
+                        <div class="col-md">
+                            {{ register_form.number(class="form-control mt-3", placeholder="Number") }}
+                        </div>
+                        <div class="col-md">
+                            {{ register_form.postal_code(class="form-control mt-3", placeholder="Postal Code") }}
+                        </div>
+                    </div>
+
+                    {{ register_form.register_submit(class="btn btn-lg btn-block btn-primary mt-4 center") }}
+                </form>
             </div>
+            <div class="col-lg">
+                <form method="POST" class="mt-reg doubled-form">
+                    {{ link_form.hidden_tag() }}
+                    <h2 class="pb-2">Link Existing Mirror</h2>
+                    <p class="form-label">Mirror product code:</p>
+                    {{ link_form.product_code(class="form-control mt-3", placeholder="Product Code") }}
+                    <p class="form-label">Owner's primary email address:</p>
+                    {{ link_form.owner_email_address(class="form-control mt-3", placeholder="Email Address") }}
 
-            {{ form.submit(class="btn btn-lg btn-block btn-primary mt-4 center") }}
-        </form>
+                    {{ link_form.link_submit(class="btn btn-lg btn-block btn-primary mt-4 center") }}
+                </form>
+            </div>
+        </div>
     </div>
     <div class="py-5"></div>
 {% endblock %}
+

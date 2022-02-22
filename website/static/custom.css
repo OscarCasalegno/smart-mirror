@@ -114,6 +114,12 @@ footer p {
     width: 100%;
 }
 
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
 .centered-form {
     width: 90%;
     min-width: 0;
@@ -125,13 +131,18 @@ footer p {
     transition: background-color 0.5s linear 0s, border 0.5s linear 0s;
 }
 
-.center {
+.doubled-form {
+    width: 90%;
+    min-width: 0;
+    padding: 2rem 1.5rem;
+    border: 1px solid white;
+    border-radius: 20px;
     margin-left: auto;
     margin-right: auto;
-    display: block;
+    transition: background-color 0.5s linear 0s, border 0.5s linear 0s;
 }
 
-.centered-form:hover {
+.doubled-form:hover, .centered-form:hover {
     background-color: rgba(252,252,252,1);
     border-color: rgba(200,200,200,1);
 }
@@ -163,7 +174,21 @@ strong:hover{
 /* Follow only if width is >= 768px */
 @media (min-width: 768px) {
     .centered-form {
-    width: 50%;
-    min-width: 500pt;
+        width: 50%;
+        min-width: 500pt;
+    }
+
+}
+
+@media (min-width: 1200px) {
+    .doubled-form {
+        min-width: 300pt;
+    }
+}
+
+@media (min-width: 1800px) {
+    .doubled-form {
+        width: 50%;
+        min-width: 500pt;
     }
 }

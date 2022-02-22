@@ -10,7 +10,7 @@ from sqlalchemy.sql.operators import mirror
 
 import website
 from website import app, db, get_google_provider_cfg, client, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-from website.forms import RegisterForm, LoginForm, UpdateForm, AddMirrorForm, EditMirrorForm
+from website.forms import RegisterForm, LoginForm, UpdateForm, RegisterMirrorForm, LinkMirrorForm, EditMirrorForm
 from website.models import User, Mirror, Relation
 from website import api_manager
 from website import google_calendar_api
@@ -44,7 +44,7 @@ def register_page():
             flash("The Google email '{0}' is already registered in our systems, please login with Google!".format(email), category='warning')
             return redirect(url_for('login_page'))
 
-        user_to_create = User(name="Name", surname="Surname", username=form.username.data, email_address=email, password=form.password1.data, credentials="")
+        user_to_create = User(name="", surname="", username=form.username.data, email_address=email, password=form.password1.data, credentials="")
         db.session.add(user_to_create)
         db.session.commit()
         login_user(user_to_create)
@@ -215,21 +215,24 @@ def add_mirror_page():
         flash("To link a new mirror please authenticate yourself!", category='warning')
         return flask.redirect(url_for("login_page"))
 
-    form = AddMirrorForm()
-    if form.validate_on_submit():
+    register_form = RegisterMirrorForm()
+    link_form = LinkMirrorForm()
 
-        raw_location = form.address.data + " " + form.number.data + ", " + form.city.data + ", " + form.region.data + ", " + form.country.data + ", " + form.postal_code.data
+    # REGISTER MIRROR FORM
+    if register_form.register_submit.data and register_form.validate():
+
+        raw_location = register_form.address.data + " " + register_form.number.data + ", " + register_form.city.data + ", " + register_form.region.data + ", " + register_form.country.data + ", " + register_form.postal_code.data
         #print "Raw: "+raw_location
         location = api_manager.get_address(raw_address=raw_location)
         #print "New: "+location
 
         #Add check if already inserted---- OWNER!!!
-        check_mirror = Mirror.query.filter_by(product_code=form.product_code.data, secret_code=form.secret_code.data).first()
+        check_mirror = Mirror.query.filter_by(product_code=register_form.product_code.data, secret_code=register_form.secret_code.data).first()
         if check_mirror is not None:
-            flash('The mirror {} has already been inserted!'.format(form.product_code.data),category='warning')
+            flash('The mirror {} has already been inserted!'.format(register_form.product_code.data),category='warning')
             return redirect(url_for('mirrors_page'))
 
-        mirror_to_create = Mirror(product_code=form.product_code.data, secret_code=form.secret_code.data, location=location, name=form.name.data)
+        mirror_to_create = Mirror(product_code=register_form.product_code.data, secret_code=register_form.secret_code.data, location=location, name=register_form.name.data)
         mirror_to_create.users.append(current_user)
         db.session.add(mirror_to_create)
         db.session.commit()
@@ -238,14 +241,47 @@ def add_mirror_page():
             relation.ownership = True
             db.session.commit()
 
-        flash('Success! Your account is now linked to the mirror {}!'.format(form.product_code.data), category='success')
+        flash('Success! You have successfully registered the mirror {}!'.format(register_form.product_code.data), category='success')
         return redirect(url_for('mirrors_page'))
 
-    if form.errors != {}: #If there are errors from the validations
-        for err_msg in form.errors.values():
+    if register_form.register_submit.data and register_form.errors != {}: #If there are errors from the validations
+        for err_msg in register_form.errors.values():
             flash('Error during the process: {0}'.format(err_msg[0]), category='danger')
 
-    return render_template("add_mirror.html", form=form)
+    # LINK MIRROR FORM
+    if link_form.link_submit.data and link_form.validate():
+
+        check_mirror = Mirror.query.filter_by(product_code=link_form.product_code.data).first()
+        if check_mirror is None:
+            flash('No mirror found having code {}. Try to register it!'.format(link_form.product_code.data), category='warning')
+            return redirect(url_for('mirrors_page'))
+
+        check_user = User.query.filter_by(email_address=link_form.owner_email_address.data).first()
+        if check_user is None:
+            flash('No user found having primary email {}!'.format(link_form.owner_email_address.data),
+                  category='warning')
+            return redirect(url_for('mirrors_page'))
+
+        check_relation = Relation.query.filter_by(user=check_user, mirror=check_mirror).first()
+        if check_relation is None:
+            flash('The user {user} is not linked to the mirror {mirror}!'.format(user=check_user.email_address, mirror=check_mirror.product_code),
+                  category='warning')
+            return redirect(url_for('mirrors_page'))
+        elif not check_relation.ownership:
+            flash('The user {user} is not the owner of the mirror {mirror}!'.format(user=check_user.email_address, mirror=check_mirror.product_code),
+                  category='warning')
+            return redirect(url_for('mirrors_page'))
+        else:
+            check_mirror.users.append(current_user)
+            db.session.commit()
+            flash('Success! Your account is now linked to the mirror {}!'.format(register_form.product_code.data), category='success')
+            return redirect(url_for('mirrors_page'))
+
+    if link_form.link_submit.data and link_form.errors != {}: #If there are errors from the validations
+        for err_msg in link_form.errors.values():
+            flash('Error during the process: {0}'.format(err_msg[0]), category='danger')
+
+    return render_template("add_mirror.html", register_form=register_form, link_form=link_form)
 
 
 @app.route('/mirrors/edit/<mirror_id>', methods=['GET', 'POST'])
