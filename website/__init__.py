@@ -10,7 +10,6 @@ import os
 
 from website import google_configuration
 
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///website.db'
 app.config['SECRET_KEY'] = os.urandom(24)  # 'ec9439cfc6c496ae2029594d'
@@ -21,10 +20,28 @@ login_manager = LoginManager(app)
 login_manager.login_view = "login_page"
 login_manager.login_message_category = "info"
 
+
+def path_getter(end_path):
+    path = __file__ + ""
+    temp = path.split("\\")
+    uri_file = ""
+    for direct in temp:
+        uri_file = uri_file + direct + "\\"
+        if direct == "website":
+            break
+    return uri_file + end_path
+
+
+uri_mail = path_getter("static\\secret\\mail_id.txt")
+f = open(uri_mail, "r")
+mail_add = f.readline().strip()
+mail_pw = f.readline().strip()
+f.close()
+
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'cleveror.it@gmail.com'
-app.config['MAIL_PASSWORD'] = '123prova'
+app.config['MAIL_USERNAME'] = mail_add
+app.config['MAIL_PASSWORD'] = mail_pw
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
@@ -44,16 +61,8 @@ GOOGLE_DISCOVERY_URL = (
 
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
-path = __file__ + ""
-temp = path.split("\\")
-uri_file = ""
-for direct in temp:
-    uri_file = uri_file + direct + "\\"
-    if direct == "website":
-        break
-#print uri_file
-uri_file = uri_file + "static\\secret\\client_secrets.json"
-#print uri_file
+uri_file = path_getter("static\\secret\\client_secrets.json")
+
 
 def get_google_provider_cfg():
     answer = requests.get(GOOGLE_DISCOVERY_URL)

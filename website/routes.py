@@ -6,14 +6,13 @@ import googleapiclient
 import requests
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
-from flask_mail import Message
 from sqlalchemy.sql.operators import mirror
 
 import website
 from website import app, db, mail, get_google_provider_cfg, client, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 from website.forms import RegisterForm, LoginForm, UpdateForm, RegisterMirrorForm, LinkMirrorForm, EditMirrorForm
 from website.models import User, Mirror, Relation
-from website import api_manager
+from website import api_manager, mail_manager
 from website import google_calendar_api
 from pprint import pprint
 from datetime import datetime
@@ -49,6 +48,7 @@ def register_page():
         db.session.add(user_to_create)
         db.session.commit()
         login_user(user_to_create)
+        mail_manager.send_registration_mail(email, "Welcome in Cleveror", user_to_create.username)
         flash("Account created successfully! You are now logged in as {0}".format(user_to_create.username), category='success')
         return redirect(url_for('personal_page'))
 
@@ -63,30 +63,6 @@ def register_page():
 def login_page():
     form = LoginForm()
     if form.validate_on_submit():
-
-        #try:
-        f = open("C:\\Users\\lucad\\PycharmProjects\\smart-mirror\\website\\templates\\mail.html", "r")
-        cont = f.read()
-        f.close()
-
-        fp = open("C:\\Users\\lucad\\PycharmProjects\\smart-mirror\\website\\static\\logo.png", 'rb')
-        img = fp.read()
-        fp.close
-
-        msg = Message('Welcome in Cleveror', sender='cleveror.it@gmail.com', recipients=['debeluca98@gmail.com'])
-        msg.body = "Welcome in Cleveror"
-
-        msg.attach(filename='logo.png', content_type='image/png', data=img, disposition='inline', headers=[("Content-ID", "<inline_logo>")])
-
-        cont = cont.replace("XXX_LINK_XXX", "https://127.0.0.1:5000/")
-        msg.html = cont.replace("XXX_NAME_XXX", "Luca Debernardi")
-        mail.send(msg)
-
-        #except Exception as e:
-         #   print "Impossible to send the email:"
-          #  print e
-
-
         attempted_user = User.query.filter_by(email_address=form.email_address.data).first()
         if attempted_user and attempted_user.check_password_correction(
                 attempted_password=form.password.data

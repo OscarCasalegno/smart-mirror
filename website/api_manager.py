@@ -1,17 +1,9 @@
 import googlemaps
+from website import path_getter
 
 
 def get_g_key():
-
-    path = __file__ + ""
-    temp = path.split("\\")
-    uri_file = ""
-    for direct in temp:
-        uri_file = uri_file + direct + "\\"
-        if direct == "website":
-            break
-    uri_file = uri_file + "static\\secret\\google_key.txt"
-
+    uri_file = path_getter("static\\secret\\google_key.txt")
     f = open(uri_file, "r")
     my_key = f.read()
     f.close()
