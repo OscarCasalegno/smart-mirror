@@ -2,13 +2,13 @@
 <html>
 <head>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='scripts/script.js') }}"></script>
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/mirror.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/oscar.js') }}"></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/oscar.css') }}">
 </head>
 
 <body>
 	<div class="container" >
-		<div class="top-left" id="top-left"></div>
+		<div class="top-left"><div id="MyClockDisplay" class="clock" onload="showTime()"></div></div>
 		<div class="center-left"></div>
 		<div class="bottom-left"></div>
 		<div class="top-right"></div>
@@ -18,9 +18,16 @@
 		<div class="reflection-center"></div>
 		<div class="reflection-bottom">
 			<div class="text-area" id="outer">
-				<div id="text"></div>
+				<div id="text">Hi, {{ user }}!</div>
 			</div>
 		</div>
 	</div>
 </body>
-<script>faceCheck(0)</script>
+
+<script type=text/javascript>
+showTime();
+
+resize_to_fit(10);
+
+setTimeout(() => {faceCheck(5000)}, 5000);
+</script>
