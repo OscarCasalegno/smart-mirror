@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/unknown.js') }}"></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/unknown.css') }}">
+</head>
+
+<body>
+	<div class="container" >
+		<div class="top-left"></div>
+		<div class="center-left"></div>
+		<div class="bottom-left"></div>
+		<div class="top-right"></div>
+		<div class="center-right"></div>
+		<div class="bottom-right"></div>
+		<div class="reflection-top"></div>
+		<div class="reflection-center"></div>
+		<div class="reflection-bottom">
+			<div class="text-area" id="outer">
+				<div id="text">HELLO BEATIFUL!</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type=text/javascript>
+resize_to_fit(10);
+setTimeout(() => {faceCheck(5000)}, 5000);
+</script>

@@ -1,0 +1,77 @@
+body{
+	color: white;
+    background-color: black;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+	animation: fadeInAnimation ease 3s;
+	animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}@keyframes fadeOutAnimation {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.container {  display: grid;
+  color: white;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 1px 1px;
+  grid-auto-flow: row;
+  width: 100vw; 
+  height: 100vh; 
+  grid-template-areas:
+    "top-left reflection-top top-right"
+    "center-left reflection-center center-right"
+    "bottom-left reflection-bottom bottom-right";
+}
+
+.top-right { grid-area: top-right; border: 2px solid #ffffff; border-radius: 10px; visibility: hidden;}
+
+.center-right { grid-area: center-right; border: 2px solid #ffffff; border-radius: 10px; visibility: hidden;}
+
+.bottom-right { grid-area: bottom-right; border: 2px solid #ffffff; border-radius: 10px; visibility: hidden;}
+
+.top-left { grid-area: top-left; border: 2px solid #ffffff; border-radius: 10px; visibility: hidden;}
+
+.center-left { grid-area: center-left; border: 2px solid #ffffff; border-radius: 10px; visibility: hidden;}
+
+.bottom-left { grid-area: bottom-left; border: 2px solid #ffffff; border-radius: 10px; visibility: hidden;}
+
+.reflection-top { grid-area: reflection-top; }
+
+.reflection-center { grid-area: reflection-center; }
+
+.reflection-bottom {
+display: grid; 
+  grid-template-columns: 1fr; 
+  grid-template-rows: repeat(2, 1fr); 
+  gap: 0px 0px; 
+  grid-template-areas: 
+    "."
+    "text-area"; 
+  grid-area: reflection-bottom; }
+  
+ .text-area {
+	grid-area: text-area;
+ }
+
+#text{
+	text-transform: uppercase; 
+	font-family: "Lucida Console";
+	text-align: center;
+	font-size: 5vw;
+}
