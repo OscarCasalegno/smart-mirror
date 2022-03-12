@@ -15,6 +15,7 @@ def get_person():
     return prsn
 
 
+
 @app.route('/user/<name>')
 def show_template(name):
     template = name + ".html"
