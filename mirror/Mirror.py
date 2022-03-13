@@ -66,7 +66,7 @@ def initiation():
 
 @mirror_app.route('/')
 def mirror():
-    return render_template("no_face.html")
+    return redirect(url_for('show_template', user_id='no_face'))
 
 
 @mirror_app.route('/add_face/<user_id>')
@@ -131,8 +131,16 @@ def train():
 @mirror_app.route('/person', methods=['GET',  'POST'])
 def get_person():
     prsn = face.recognize()
+
     print prsn
-    return prsn
+
+    user = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id, User.id == prsn).all()
+
+    if len(user) != 1:
+        print "Error!\nUser {} not linked".format(prsn)
+        return "unknown"
+    else:
+        return prsn
 
 
 @mirror_app.route('/user/<user_id>')
