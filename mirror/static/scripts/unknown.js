@@ -1,12 +1,11 @@
 function faceCheck(n) {$.get('/person', 
 	function(data) {
 		if (data == 'unkown'){
-			setTimeout(() => {faceCheck(3000)}, n);
+			setTimeout(() => {faceCheck(n)}, n);
 		}else{
 			var url = "/user/" + data
 			document.body.style.animation = 'fadeOutAnimation ease 3s'
 			setTimeout(() => {window.location.replace(url)}, 2900);
-			
 		}
     });
 }

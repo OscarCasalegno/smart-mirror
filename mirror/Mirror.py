@@ -42,7 +42,7 @@ def test():
 
 @app.route('/')
 def mirror():
-    return render_template("no_face.html")
+    return redirect(url_for('show_template', user_id='no_face'))
 
 
 @app.route('/add_face')
@@ -86,8 +86,16 @@ def train():
 @app.route('/person', methods=['GET',  'POST'])
 def get_person():
     prsn = face.recognize()
+
     print prsn
-    return prsn
+
+    user = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id, User.id == prsn).all()
+
+    if len(user) != 1:
+        print "Error!\nUser {} not linked".format(prsn)
+        return "unknown"
+    else:
+        return prsn
 
 
 @app.route('/user/<user_id>')

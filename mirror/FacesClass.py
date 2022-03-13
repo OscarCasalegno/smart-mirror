@@ -26,7 +26,7 @@ class Faces():
     def newface(self, user_id):
         """
         used to add a new person to the database, asks for the name of the new person and checks wether it is already present.
-        After opening the farem and receiving the 's' command, it start to capture images for 10 seconds.
+        After opening the frame and receiving the 's' command, it start to capture images for 10 seconds.
         saves all the images in the image_dir in a folder named after the person.
         :return: True if person added, False if person already present
         """

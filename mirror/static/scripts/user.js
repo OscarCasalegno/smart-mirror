@@ -1,7 +1,9 @@
 function faceCheck(n) {$.get('/person', 
 	function(data) {
-		if (data == 'oscar'){
-			setTimeout(() => {faceCheck(5000)}, n);
+		var path = window.location.pathname;
+		var page = path.split("/").pop();
+		if (data == page){
+			setTimeout(() => {faceCheck(n)}, n);
 		}else{
 			var url = "/user/" + data
 			document.body.style.animation = 'fadeOutAnimation ease 3s'
