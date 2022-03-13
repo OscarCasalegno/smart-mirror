@@ -1,4 +1,3 @@
-from website import path_getter
 
 def get_maps_key():
     f = open("static/secret/google_key.txt", "r")

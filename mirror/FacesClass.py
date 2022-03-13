@@ -6,6 +6,7 @@ from datetime import datetime
 from PIL import Image
 from time import sleep
 
+
 def path_getter(end_path):
     path = __file__ + ""
     temp = path.split("\\")
@@ -92,6 +93,9 @@ class Faces:
             else:
                 print('Person not present')
                 return False
+
+    def get_registered_faces(self):
+        return os.listdir(self.image_dir)
 
     def personnumber(self):
         persons = os.listdir(self.image_dir)
