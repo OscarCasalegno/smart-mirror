@@ -1,20 +1,12 @@
-from FacesClass import Faces
+import time
+
+from FacesClass import Faces, path_getter
 from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.automap import automap_base
 
 app = Flask(__name__)
 face = Faces()
-
-def path_getter(end_path):
-    path = __file__ + ""
-    temp = path.split("\\")
-    uri_file = ""
-    for direct in temp:
-        uri_file = uri_file + direct + "\\"
-        if direct == "smart-mirror":
-            break
-    return uri_file + end_path
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+path_getter("\\website\\website.db")
@@ -53,18 +45,65 @@ def mirror():
     return render_template("no_face.html")
 
 
-@app.route('/person', methods= ['GET',  'POST'])
+@app.route('/add_face')
+def add_face():
+    user_id = str(3)
+    if face.newface(user_id):
+        print "Face of user {} added!".format(user_id)
+        train()
+    else:
+        print "Face of user {} is already present!".format(user_id)
+
+    return redirect(url_for('show_template', user_id=user_id))
+
+
+@app.route('/remove_face/<user_id>')
+def remove_face(user_id):
+    user_id = str("luca")
+    if face.removeface(user_id):
+        print "Face of user {} removed!".format(user_id)
+        train()
+    else:
+        print "Face of user {} not in the system!".format(user_id)
+
+    return redirect(url_for('mirror'))
+
+
+@app.route('/train')
+def train_page():
+    train()
+    return redirect(url_for('mirror'))
+
+
+def train():
+    print "Train started"
+    start = time.time()
+    face.train()
+    end = time.time()
+    print "Train over in {:.1f} seconds".format(end - start)
+
+
+@app.route('/person', methods=['GET',  'POST'])
 def get_person():
     prsn = face.recognize()
     print prsn
     return prsn
 
 
+@app.route('/user/<user_id>')
+def show_template(user_id):
+    if user_id == "no_face":
+        return render_template("no_face.html")
+    if user_id == "unknown":
+        return render_template("unknown.html")
 
-@app.route('/user/<name>')
-def show_template(name):
+    user = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id, User.id == user_id).all()
 
-    return render_template("registered_user.html", user=name)
+    if len(user) != 1:
+        print "Error!\nUser {} not linked".format(user_id)
+        return render_template("unknown.html")
+    else:
+        return render_template("registered_user.html", user=user[0])
 
 
 

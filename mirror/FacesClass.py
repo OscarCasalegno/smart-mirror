@@ -6,28 +6,36 @@ from datetime import datetime
 from PIL import Image
 from time import sleep
 
+def path_getter(end_path):
+    path = __file__ + ""
+    temp = path.split("\\")
+    uri_file = ""
+    for direct in temp:
+        uri_file = uri_file + direct + "\\"
+        if direct == "smart-mirror":
+            break
+    return uri_file + end_path
 
 class Faces():
-    image_dir = 'C:\Users\oscar\PycharmProjects\pythonProject\images'
+    image_dir = path_getter('\\mirror\\images')
 
     def __init__(self):
 
         pass
 
-    def newface(self):
+    def newface(self, user_id):
         """
         used to add a new person to the database, asks for the name of the new person and checks wether it is already present.
         After opening the farem and receiving the 's' command, it start to capture images for 10 seconds.
         saves all the images in the image_dir in a folder named after the person.
         :return: True if person added, False if person already present
         """
-        while (True):
-            name = raw_input('Insert the name of the new person:')
-            if (os.path.exists(os.path.join(self.image_dir, name))):
-                print('Person already present\n')
+        while True:
+            if os.path.exists(os.path.join(self.image_dir, user_id)):
+                print('Person already present')
                 return False
             else:
-                path = os.path.join(self.image_dir, name)
+                path = os.path.join(self.image_dir, user_id)
                 os.mkdir(path)
                 break
 
@@ -67,22 +75,21 @@ class Faces():
         cv2.destroyAllWindows()
         return True
 
-    def removeface(self):
+    def removeface(self, user_id):
         """
         Used to remove a person from the database, asks for the person and deletes every image and the folder.
         :return: True if person deleted, False if person not present
         """
-        while (True):
-            name = raw_input('Insert the name of the person to be removed:')
-            if (os.path.exists(os.path.join(self.image_dir, name))):
-                path = os.path.join(self.image_dir, name)
+        while True:
+            if os.path.exists(os.path.join(self.image_dir, user_id)):
+                path = os.path.join(self.image_dir, user_id)
                 for file in os.listdir(path):
                     file_path = os.path.join(path, file)
                     os.remove(file_path)
                 os.rmdir(path)
                 return True
             else:
-                print('Person not present\n')
+                print('Person not present')
                 return False
 
     def personnumber(self):
@@ -125,11 +132,11 @@ class Faces():
                         x_train.append(roi)
                         y_labels.append(id_)
 
-        with open('labels.pickle', 'wb') as f:
+        with open('mirror/labels.pickle', 'wb') as f:
             pickle.dump(label_ids, f)
 
         recognizer.train(x_train, np.array(y_labels))
-        recognizer.save('trainer.yml')
+        recognizer.save('mirror\\trainer.yml')
 
     def recognize(self):
         face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_alt2.xml')
