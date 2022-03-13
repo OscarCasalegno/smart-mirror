@@ -1,5 +1,7 @@
+from website import path_getter
+
 def get_maps_key():
-    f = open("website/static/secret/google_key.txt", "r")
+    f = open("static/secret/google_key.txt", "r")
     my_key = f.read()
     f.close()
     print "Maps API key: {}".format(my_key)
@@ -7,7 +9,7 @@ def get_maps_key():
 
 
 def get_id_client_secret():
-    f = open("website/static/secret/google_id.txt", "r")
+    f = open("static/secret/google_id.txt", "r")
     google_id_client = f.readline().strip()
     google_client_secret = f.readline().strip()
     f.close()

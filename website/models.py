@@ -82,6 +82,7 @@ class Relation(db.Model):
     mirror_id = db.Column(db.Integer, db.ForeignKey('mirror.id'), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     ownership = db.Column(db.Boolean(), default=False)
+    recognisable = db.Column(db.Boolean(), default=False)
 
     user = relationship(User, backref=backref("related", cascade="all, delete-orphan"))
     mirror = relationship(Mirror, backref=backref("related", cascade="all, delete-orphan"))

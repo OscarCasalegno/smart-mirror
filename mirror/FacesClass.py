@@ -16,7 +16,8 @@ def path_getter(end_path):
             break
     return uri_file + end_path
 
-class Faces():
+
+class Faces:
     image_dir = path_getter('\\mirror\\images')
 
     def __init__(self):
@@ -132,23 +133,23 @@ class Faces():
                         x_train.append(roi)
                         y_labels.append(id_)
 
-        with open('mirror/labels.pickle', 'wb') as f:
+        with open(path_getter('mirror/labels.pickle'), 'wb') as f:
             pickle.dump(label_ids, f)
 
         recognizer.train(x_train, np.array(y_labels))
-        recognizer.save('mirror\\trainer.yml')
+        recognizer.save('mirror/trainer.yml')
 
     def recognize(self):
         face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_alt2.xml')
         recognizer = cv2.face.LBPHFaceRecognizer_create()
         try:
-            recognizer.read('mirror\\trainer.yml')
+            recognizer.read(path_getter('mirror/trainer.yml'))
         except:
             print 'No training file found'
             return 'ERROR_TRAINING'
 
         labels = {'person_name': 1}
-        with open('mirror/labels.pickle', 'rb') as f:
+        with open(path_getter('mirror/labels.pickle'), 'rb') as f:
             old_labels = pickle.load(f)
             labels = {v: k for k, v in old_labels.items()}
 

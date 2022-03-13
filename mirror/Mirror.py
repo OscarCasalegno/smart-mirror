@@ -5,12 +5,12 @@ from flask import Flask, render_template, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.automap import automap_base
 
-app = Flask(__name__)
+mirror_app = Flask(__name__)
 face = Faces()
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+path_getter("\\website\\website.db")
-db = SQLAlchemy(app)
+mirror_app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+path_getter("\\website\\website.db")
+db = SQLAlchemy(mirror_app)
 
 Base = automap_base()
 Base.prepare(db.engine, reflect=True)
@@ -20,11 +20,29 @@ Relation = Base.classes.relations
 
 product_code = 11
 me = db.session.query(Mirror).filter(Mirror.product_code == product_code).first()
-print "I am", me.id
+if me is not None:
+    print "I am", me.id
+else:
+    print "Mirror not registered"
 
 
+def get_users():
+    linked_users = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id).all()
+    return linked_users
 
-@app.route('/test')
+
+def set_recognisable(user_id, value):
+    return 0
+    #SULLA RELAZIONE!!!
+    #linked_user = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id, User.id == user_id).all()
+    #if len(linked_user) == 1:
+    #    linked_user[0].xxxxx = value
+    #    return True
+    #else:
+    #    return False
+
+
+@mirror_app.route('/test')
 def test():
     #prova = db.session.query(User).join(Mirror).filter(Mirror.id == 2).count()
     #utenti = db.session.query(User).all()
@@ -40,26 +58,34 @@ def test():
     print utenti[0].username
 
 
-@app.route('/')
+@mirror_app.route('/')
 def mirror():
     return render_template("no_face.html")
 
 
-@app.route('/add_face')
-def add_face():
-    user_id = str(3)
-    if face.newface(user_id):
+@mirror_app.route('/add_face/<user_id>')
+def add_face(user_id):
+
+    relation = db.session.query(Relation).filter(Relation.mirror_id == me.id, Relation.user_id == user_id).all()
+    if len(relation) != 1:
+        print "Error!\nUser {} not linked".format(user_id)
+        return redirect(url_for('mirror'))
+
+    if face.newface( str(user_id) ):
         print "Face of user {} added!".format(user_id)
         train()
     else:
         print "Face of user {} is already present!".format(user_id)
 
+    relation[0].recognisable = True
+    db.session.commit()
+
     return redirect(url_for('show_template', user_id=user_id))
 
 
-@app.route('/remove_face/<user_id>')
+@mirror_app.route('/remove_face/<user_id>')
 def remove_face(user_id):
-    user_id = str("luca")
+    user_id = str(user_id)
     if face.removeface(user_id):
         print "Face of user {} removed!".format(user_id)
         train()
@@ -69,10 +95,15 @@ def remove_face(user_id):
     return redirect(url_for('mirror'))
 
 
-@app.route('/train')
+@mirror_app.route('/train')
 def train_page():
     train()
     return redirect(url_for('mirror'))
+
+
+@mirror_app.route('/register')
+def register():
+    return render_template("register.html")
 
 
 def train():
@@ -83,15 +114,17 @@ def train():
     print "Train over in {:.1f} seconds".format(end - start)
 
 
-@app.route('/person', methods=['GET',  'POST'])
+@mirror_app.route('/person', methods=['GET',  'POST'])
 def get_person():
     prsn = face.recognize()
     print prsn
     return prsn
 
 
-@app.route('/user/<user_id>')
+@mirror_app.route('/user/<user_id>')
 def show_template(user_id):
+    if me is None:
+        return redirect(url_for('register'))
     if user_id == "no_face":
         return render_template("no_face.html")
     if user_id == "unknown":
@@ -106,6 +139,5 @@ def show_template(user_id):
         return render_template("registered_user.html", user=user[0])
 
 
-
 if __name__ == '__main__':
-    app.run()
+    mirror_app.run(port=8080)
