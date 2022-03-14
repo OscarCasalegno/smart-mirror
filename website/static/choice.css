@@ -1,0 +1,117 @@
+#inner-body {
+    background-color: black;
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: 0;
+    text-transform: uppercase;
+    font-family: "Lucida Console";
+    text-align: center;
+}
+
+#inner-body .container {
+    display: grid;
+    color: white;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 1px 1px;
+    grid-auto-flow: row;
+    width: 100vw;
+    height: 73vh;
+    grid-template-areas:
+    "top-left reflection-top top-right"
+    "center-left reflection-center center-right"
+    "bottom-left reflection-bottom bottom-right";
+}
+
+.top-right { grid-area: top-right;}
+.center-right { grid-area: center-right;}
+.bottom-right { grid-area: bottom-right;}
+.top-left { grid-area: top-left;}
+.center-left { grid-area: center-left;}
+.bottom-left { grid-area: bottom-left;}
+.reflection-top { grid-area: reflection-top;}
+.reflection-center { grid-area: reflection-center}
+.reflection-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0px 0px;
+    grid-template-areas:
+    "."
+    "text-area";
+    grid-area: reflection-bottom; }
+.text-area {grid-area: text-area;}
+
+div.top-right, div.center-right, div.bottom-right, div.top-left, div.center-left, div.bottom-left, div.text-area{
+    border: 2px solid #ffffff;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+div.top-right:hover, div.center-right:hover, div.bottom-right:hover, div.top-left:hover, div.center-left:hover, div.bottom-left:hover, div.text-area:hover, div.top-right:hover label, div.center-right:hover label, div.bottom-right:hover label, div.top-left:hover label, div.center-left:hover label, div.bottom-left:hover label, div.text-area:hover label{
+    background-color: grey;
+}
+
+
+.overlay {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0, 0.9);
+    overflow-x: hidden;
+}
+
+.overlay-content {
+    position: relative;
+    top: 25%;
+    width: 100%;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+.overlay a:hover, .overlay a:focus {
+    color: #f1f1f1; !important;
+}
+
+.overlay .closebtn {
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 60px;
+}
+
+label {
+    background-color: black;
+    color: white;
+    font-size: 2vw;
+}
+input{
+    display :none;
+}
+input.submit{
+    display :block;
+    width:100%;
+    background-color: black;
+    color: white;
+    font-size: 3vw;
+}
+input.submit:hover{
+    background-color:grey;
+}
