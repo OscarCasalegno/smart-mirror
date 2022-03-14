@@ -1,13 +1,14 @@
 <style>
-    .weatherwidget-io{
-        position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translateX(-50%) translateY(-50%);
+    .myLocationButton{
+        display: none;
+    }
+    .switchUnitButton{
+        display: none;
+    }
+    #weatherwidget{
+        background-color: black;
+        color:white;
     }
 </style>
-<a class="weatherwidget-io" href="https://forecast7.com/en/LOCATION_CODE/LOCATION_NAME" data-label_1="LOCATION_NAME" data-label_2="WEATHER" data-font="Consolas" data-theme="dark" data-suncolor="#ffffff" >LOCATION_NAME WEATHER</a>
-<script>
-!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
-</script>
-<!–– per automatizzare fare call a https://forecast7.com/api/getUrl/Google_Location_Id con il location id del luogo per ottenere  LOCATION_CODE/LOCATION_NAME––>
+<div id="weatherwidget" class="weatherwidget"></div>
+<script src="http://widget.meteomatics.com/widget/Turin/47.424_9.377/width/on/weatherwidget/C" type="text/javascript"></script>
