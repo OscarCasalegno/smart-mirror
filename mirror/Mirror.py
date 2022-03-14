@@ -1,9 +1,12 @@
+import datetime
 import time
 
 from FacesClass import Faces, path_getter
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.automap import automap_base
+import api
+from dateutil.parser import parse
 
 mirror_app = Flask(__name__)
 face = Faces()
@@ -50,19 +53,43 @@ def test():
     #for x in dir(utenti[0]):
     #    print "| ", x
     #print utenti[0].username
-    for user in get_users():
-        print "User {username} ({id}) is linked".format(id=user.id, username=user.username)
+    #for user in get_users():
+    #    print "User {username} ({id}) is linked".format(id=user.id, username=user.username)
 
-    for user in get_not_recognisable_users():
-        print "User {username} ({id}) is not recognisable, add his face".format(id=user.id, username=user.username)
+    #for user in get_not_recognisable_users():
+    #    print "User {username} ({id}) is not recognisable, add his face".format(id=user.id, username=user.username)
 
-    for person in face.get_registered_faces():
-        print "Face of the user {id}".format(id=person)
+    #for person in face.get_registered_faces():
+    #    print "Face of the user {id}".format(id=person)
+    #for user in get_users():
+    #    print api.get_google_events(user)
+
+    events = api.get_google_events(get_users()[0])
+    for event in events["items"]:
+        name = event["summary"]
+        location = event["location"]
+        start = parse(event["start"]["dateTime"])
+        #print start.date()
+        #print start.time()
+        #print start.tzinfo
+        end = parse(event["end"]["dateTime"])
+
+        by = "driving"
+        path = api.get_distance(me.location, location, by)
+        duration = path["rows"][0]["elements"][0]["duration"]["text"]
+        distance = path["rows"][0]["elements"][0]["distance"]["text"]
+
+
+        print "{summary} in {location} starting at {start} for {duration}".format(summary=name, location=location, start=start.time(), duration=api.format_duration(end-start))
+        print "It will took {duration} {by} to travel the {distance} of distance\n".format(duration=duration, distance=distance, by=by)
+
+    return jsonify(**events)
 
 
 @mirror_app.route('/initiate')
 def initiation():
     print "hello"
+
 
 @mirror_app.route('/')
 def mirror():
@@ -170,6 +197,7 @@ def armageddon():
         else:
             "  Error deleting the face of the user {id}".format(id=person)
     print "Procedure finished!"
+
 
 if __name__ == '__main__':
     mirror_app.run(port=8080)
