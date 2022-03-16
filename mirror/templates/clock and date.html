@@ -1,5 +1,5 @@
 <style>
-		.clock {
+		.clock_date {
 	    position: absolute;
 		top: 50%;
 		left: 50%;
@@ -9,10 +9,10 @@
 		font-size: 4vw;
 		font-family: Lucida Console;
 		letter-spacing: 7px;
+        text-align: center;
 }
-
 </style>
-<div id="MyClockDisplay" class="clock" onload="showTime()"></div>
+<div id="MyClockDateDisplay" class="clock_date" onload="showTime()"></div>
 <script>
 function showTime(){
     var date = new Date();
@@ -21,8 +21,12 @@ function showTime(){
     var s = date.getSeconds().toLocaleString(undefined, {minimumIntegerDigits: 2}); // 0 - 59
 
     var time = h + ":" + m + ":" + s;
-    document.getElementById("MyClockDisplay").innerText = time;
-    document.getElementById("MyClockDisplay").textContent = time;
+
+    var date = date.toDateString();
+
+    var rappr = date + "<br>" + time;
+
+    document.getElementById("MyClockDateDisplay").innerHTML = rappr;
 
     setTimeout(showTime, 1000);
 }
