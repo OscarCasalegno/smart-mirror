@@ -14,7 +14,7 @@
 </style>
 <div id="MyClockDateDisplay" class="clock_date" onload="showTime()"></div>
 <script>
-function showTime(){
+function showTimeDate(){
     var date = new Date();
     var h = date.getHours().toLocaleString(undefined, {minimumIntegerDigits: 2}); // 0 - 23
     var m = date.getMinutes().toLocaleString(undefined, {minimumIntegerDigits: 2}); // 0 - 59
@@ -28,8 +28,8 @@ function showTime(){
 
     document.getElementById("MyClockDateDisplay").innerHTML = rappr;
 
-    setTimeout(showTime, 1000);
+    setTimeout(showTimeDate, 1000);
 }
 
-showTime();
+showTimeDate();
 </script>
