@@ -3,22 +3,22 @@
 <head>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='scripts/user.js') }}"></script>
-<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/oscar.css') }}">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/registered.css') }}">
 </head>
 
 <body>
 	<div class="container" >
-		<div class="top-left"><div id="MyClockDisplay" class="clock" onload="showTime()"></div></div>
-		<div class="center-left"></div>
-		<div class="bottom-left"></div>
-		<div class="top-right"></div>
-		<div class="center-right"></div>
-		<div class="bottom-right"></div>
+		<div class="top-left">{{ layout["top-left"]|safe }}</div>
+		<div class="center-left">{{ layout["center-left"]|safe }}</div>
+		<div class="bottom-left">{{ layout["bottom-left"]|safe }}</div>
+		<div class="top-right">{{ layout["top-right"]|safe }}</div>
+		<div class="center-right">{{ layout["center-right"]|safe }}</div>
+		<div class="bottom-right">{{ layout["bottom-right"]|safe }}</div>
 		<div class="reflection-top"></div>
 		<div class="reflection-center"></div>
 		<div class="reflection-bottom">
 			<div class="text-area" id="outer">
-				<div id="text">Hi, {{ user.username }}!</div>
+				<div id="text">{{ layout["text"] }} {{ user.username }}!</div>
 			</div>
 		</div>
 	</div>

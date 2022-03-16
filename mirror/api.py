@@ -44,6 +44,17 @@ def get_distance(start_point, end_point, mode):
     return response
 
 
+def get_geocode(address):
+    f = open(path_getter("/website/static/secret/google_key.txt"), "r")
+    my_key = f.read()
+    f.close()
+
+    gmaps = googlemaps.Client(key=my_key)
+    response = gmaps.geocode(address=address)  # mode="driving"
+    print json.dumps(response)
+    return response
+
+
 def credentials_to_dict(credentials):
     return {'token': credentials.token,
             'refresh_token': credentials.refresh_token,
@@ -64,15 +75,15 @@ def format_duration(duration):
 
     formatted = ""
     if hours > 1:
-        formatted += "{h:.0f} hours".format(h=hours)
+        formatted += "{h:.0f}h".format(h=hours)
     if hours == 1:
-        formatted += "{h:.0f} hour".format(h=hours)
+        formatted += "{h:.0f}h".format(h=hours)
     if hours > 0 and minutes > 0:
-        formatted += " and "
+        formatted += " & "
     if minutes > 1:
-        formatted += "{m:.0f} minutes".format(m=minutes)
+        formatted += "{m:.0f}min".format(m=minutes)
     if minutes == 1:
-        formatted += "{m:.0f} minute".format(m=minutes)
+        formatted += "{m:.0f}min".format(m=minutes)
 
     return formatted
 

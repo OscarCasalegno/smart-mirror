@@ -194,7 +194,7 @@ def info_page():
 
 
 @app.route('/layout/<mirror_id>', methods=['GET', 'POST'])
-def layout(mirror_id):                                   #DA GESTIRE CENTROLLO SPECCHIO
+def layout_page(mirror_id):                                   #DA GESTIRE CENTROLLO SPECCHIO
     if current_user.is_authenticated:
         # Retrieve the mirror (handling errors)
         mirror = Mirror.query.filter_by(id=mirror_id).first()
@@ -218,8 +218,8 @@ def layout(mirror_id):                                   #DA GESTIRE CENTROLLO S
             print json.dumps(layout_new)
             db.session.commit()
 
-            flash('Success! Your personal information have been updated!'.format(), category='success')
-            return redirect(url_for('personal_page'))
+            flash('Success! Your Layout for {mirror} has been updated!'.format(mirror=mirror.__repr__()), category='success')
+            return redirect(url_for('mirrors_page'))
 
         #layout_base = {"top-left": "", "center-left": "", "bottom-left": "",
         #     "top-right": "", "center-right": "", "bottom-right": "",

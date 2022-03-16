@@ -33,6 +33,9 @@
         <div class="overlay-content">
             <a id="" onclick="selection(this.id)" href="#">NONE</a>
             <a id="WIDGET" onclick="selection(this.id)" href="#">WIDGET</a>
+            <a id="CLOCK" onclick="selection(this.id)" href="#">CLOCK</a>
+            <a id="WEATHER" onclick="selection(this.id)" href="#">WEATHER</a>
+            <a id="CALENDAR" onclick="selection(this.id)" href="#">CALENDAR</a>
         </div>
     </div>
     </div>
@@ -74,10 +77,16 @@
             var div = document.getElementById("text-area");
             div.style.fontSize = (n) + "vw";
 
-            if (div.scrollHeight >= div.offsetHeight) {
+            if (n == 0) {
+                div.style.fontSize = "16px";
+                return 0;
+            }
+
+            else if (div.scrollHeight >= div.offsetHeight) {
                 resize_to_fit(n-1);
             }
-        }
 
+        }
+        resize_to_fit(10);
     </script>
 {% endblock %}
