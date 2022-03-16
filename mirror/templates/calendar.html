@@ -7,13 +7,13 @@
         background-color: black;
         color:white;
     }
-    .day{
+    .day-block{
         border: 2px solid #ffffff;
         display: flex;
         justify-content: center;
         align-items: center;
         font-family: "Lucida Console";
-        font-size: 2vw;
+        font-size: 1vw;
     }
     .weekend{
         background-color: #3b3b3b;
@@ -27,7 +27,7 @@
         justify-content: center;
         align-items: center;
         font-family: "Lucida Console";
-        font-size: 2vw;
+        font-size: 1vw;
     }
 </style>
 
@@ -69,11 +69,11 @@
 
     for(let day =1; day<= daysInMonth (date.getMonth()+1, date.getFullYear()); day++){
         if(day==date.getDate()) {
-            calendar.insertAdjacentHTML("beforeend", '<div class="day today">' + day + '<div>')
+            calendar.insertAdjacentHTML("beforeend", '<div class="day-block today">' + day + '<div>')
         }else if(isWeekend(date.getMonth(), date.getFullYear(), day)){
-            calendar.insertAdjacentHTML("beforeend", '<div class="day weekend">'+day+'<div>')
+            calendar.insertAdjacentHTML("beforeend", '<div class="day-block weekend">'+day+'<div>')
         }else{
-            calendar.insertAdjacentHTML("beforeend", '<div class="day">'+day+'<div>')
+            calendar.insertAdjacentHTML("beforeend", '<div class="day-block">'+day+'<div>')
         }
     }
 </script>
