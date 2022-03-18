@@ -67,30 +67,43 @@
         <div id="2" class="selection">Add new face</div>
         <div id="3" class="selection">Remove face</div>
     </div>
-    <div class="selector" id="2_selector" ">
+    <div class="selector" id="2_selector">
         <table>
-            <tbody id="2_list">
+            <tbody id="2_list" onload="populate(this.id)">
             <tr><td class="selected">cancel</td></tr>
-            <tr><td id="user1_id">user1_name</td></tr>
-            <tr><td id="user2_id">user2_name</td></tr>
             </tbody>
         </table>
     </div>
-    <div class="selector" id="3_selector" ">
+    <div class="selector" id="3_selector">
         <table>
-            <tbody id="3_list">
+            <tbody id="3_list" onload="populate(this.id)">
             <tr><td class="selected">cancel</td></tr>
-            <tr><td id="user3_id">user3_name</td></tr>
-            <tr><td id="user4_id">user4_name</td></tr>
             </tbody>
         </table>
     </div>
 </body>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
+    function populate(id){
+        if(id=="2_list"){
+            $.get('/get_not_recognisable_users',
+                function(data) {
+                    for(const user_id of data.keys()) {
+                        document.getElementById(id).insertAdjacentHTML("beforeend", '<tr><td id="' + user_id + '">' + data[user_id] + '</td></tr>');
+                    }
+                }
+            );
+        }else if(id=="3_list"){
+            $.get('/get_recognisable_users',
+                function(data) {
+                    for(const user_id of data.keys()) {
+                        document.getElementById(id).insertAdjacentHTML("beforeend", '<tr><td id="' + user_id + '">' + data[user_id] + '</td></tr>');
+                    }
+                }
+            );
+        }
 
-
-
+    }
 
     var main_children = document.getElementById("main").children;
     var sel2_children = document.getElementById("2_list").children;
@@ -160,11 +173,21 @@ function moveUp(){
 
     function selectCurrentSection(){
         if(document.getElementById("2_selector").style.display == "block"){
-            alert(current_sel2);
-            closeSelector();
+            if(current_sel2==0){
+                closeSelector();
+            }else{
+                let url = "/add_face/"+sel2_children[current_sel2].firstChild.id;
+                window.location.replace(url);
+            }
         }else if(document.getElementById("3_selector").style.display == "block"){
-            alert(current_sel3);
-            closeSelector();
+            if(current_sel3==0){
+                closeSelector();
+            }else{
+                let url = "/remove_face/"+sel3_children[current_sel3].firstChild.id;
+                window.location.replace(url);
+            }
+        }else if(current_main==0){
+            window.location.replace("/train")
         }else{
             showSelector();
         }

@@ -41,13 +41,22 @@ def get_users():
 def get_not_recognisable_users():
     recognisable_users = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id,
                                                                           Relation.recognisable == True).all()
-    return recognisable_users
+    users_dict = {}
+    for person in recognisable_users:
+        users_dict[person.id] = person.name
+
+    return users_dict
 
 @mirror_app.route('/get_not_recognisable_users')
 def get_not_recognisable_users():
     not_recognisable_users = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id,
                                                                           Relation.recognisable == False).all()
-    return not_recognisable_users
+
+    users_dict = {}
+    for person in not_recognisable_users:
+        users_dict[person.id] = person.name
+
+    return users_dict
 
 
 @mirror_app.route('/test')
