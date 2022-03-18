@@ -88,7 +88,7 @@
         if(id=="2_list"){
             $.get('/get_not_recognisable_users',
                 function(data) {
-                    for(const user_id of data.keys()) {
+                    for(var user_id in data) {
                         document.getElementById(id).insertAdjacentHTML("beforeend", '<tr><td id="' + user_id + '">' + data[user_id] + '</td></tr>');
                     }
                 }
@@ -96,7 +96,7 @@
         }else if(id=="3_list"){
             $.get('/get_recognisable_users',
                 function(data) {
-                    for(const user_id of data.keys()) {
+                    for(var user_id in data) {
                         document.getElementById(id).insertAdjacentHTML("beforeend", '<tr><td id="' + user_id + '">' + data[user_id] + '</td></tr>');
                     }
                 }
@@ -113,23 +113,23 @@
     var current_sel3=0;
 
     $(document).keydown(function(e) {
-      switch(e.which) {
-          case 13: // enter
-              selectCurrentSection();
-          break;
+        switch(e.which) {
+            case 13: // enter
+                selectCurrentSection();
+                break;
 
-         case 38: // up
-             moveUp(document.getElementsByClassName("selected"));
-         break;
+            case 38: // up
+                moveUp(document.getElementsByClassName("selected"));
+                break;
 
-         case 40: // down
-             moveDown(document.getElementsByClassName("selected"));
-         break;
+            case 40: // down
+                moveDown(document.getElementsByClassName("selected"));
+                break;
 
-         default: return;
-     }
-     e.preventDefault();
-  });
+            default: return;
+        }
+        e.preventDefault();
+    });
 
     function moveDown(){
         if(document.getElementById("2_selector").style.display == "block"){
@@ -150,8 +150,8 @@
         }
     }
 
-function moveUp(){
-    if(document.getElementById("2_selector").style.display == "block"){
+    function moveUp(){
+        if(document.getElementById("2_selector").style.display == "block"){
             if(current_sel2 != 0){
                 sel2_children[current_sel2].firstChild.classList.remove("selected");
                 sel2_children[--current_sel2].firstChild.classList.add("selected");
@@ -167,8 +167,7 @@ function moveUp(){
                 main_children[--current_main].classList.add("selected");
             }
         }
-}
-
+    }
 
 
     function selectCurrentSection(){
@@ -191,21 +190,24 @@ function moveUp(){
         }else{
             showSelector();
         }
-}
-
-function showSelector(){
-    document.getElementById("main").style.opacity = "25%";
-    if(current_main==1){
-        document.getElementById("2_selector").style.display = "block";
-    }else{
-        document.getElementById("3_selector").style.display = "block";
     }
-}
+
+    function showSelector(){
+        document.getElementById("main").style.opacity = "25%";
+        if(current_main==1){
+            document.getElementById("2_selector").style.display = "block";
+        }else{
+            document.getElementById("3_selector").style.display = "block";
+        }
+    }
+
     function closeSelector() {
         document.getElementById("main").style.opacity = "100%";
         document.getElementById("2_selector").style.display = "none"
         document.getElementById("3_selector").style.display = "none"
     }
 
+    populate("2_list")
+    populate("3_list")
 </script>
 </html>
