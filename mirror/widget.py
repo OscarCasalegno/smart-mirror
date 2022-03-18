@@ -11,10 +11,16 @@ def widget_html_handler(widget, user, mirror):
         return ""
     elif widget == "CLOCK":
         return clock_html_handler()
+    elif widget == "CLOCK & DATE":
+        return clock_date_html_handler()
     elif widget == "WEATHER":
         return weather_html_handler(mirror)
     elif widget == "CALENDAR":
-        return calendar_html_handler(user, mirror)
+        return calendar_html_handler()
+    elif widget == "AGENDA":
+        return agenda_html_handler(user, mirror)
+    elif widget == "FINANCE":
+        return finance_html_handler()
     else:
         return ""
 
@@ -51,8 +57,8 @@ def weather_html_handler(mirror):
         return "Weather unavailable"
 
 
-def calendar_html_handler(user, mirror):
-    path_widget = path_getter("\\mirror\\templates\\widget\\calendar.html")
+def agenda_html_handler(user, mirror):
+    path_widget = path_getter("\\mirror\\templates\\widget\\agenda.html")
     try:
         f = io.open(path_widget, mode="r", encoding="utf-8")
         html = f.read()
@@ -74,7 +80,8 @@ def calendar_html_handler(user, mirror):
             if location != "":
                 by = "driving"
                 path = api.get_distance(mirror.location, location, by)
-                duration = path["rows"][0]["elements"][0]["duration"]["text"]
+                duration = path["rows"][0]["elements"][0]["duration"]["value"]
+                duration = api.format_duration(seconds=duration)
                 distance = path["rows"][0]["elements"][0]["distance"]["text"]
             else:
                 duration = "-"
@@ -88,4 +95,40 @@ def calendar_html_handler(user, mirror):
         return html
 
     except:
+        return "Agenda unavailable"
+
+
+def calendar_html_handler():
+    path_widget = path_getter("\\mirror\\templates\\widget\\calendar.html")
+    try:
+        f = open(path_widget, "r")
+        html = f.read()
+        f.close()
+        # print html
+        return html
+    except:
         return "Calendar unavailable"
+
+
+def clock_date_html_handler():
+    path_widget = path_getter("\\mirror\\templates\\widget\\clock_date.html")
+    try:
+        f = open(path_widget, "r")
+        html = f.read()
+        f.close()
+        # print html
+        return html
+    except:
+        return "Clock and date unavailable"
+
+
+def finance_html_handler():
+    path_widget = path_getter("\\mirror\\templates\\widget\\finance.html")
+    try:
+        f = open(path_widget, "r")
+        html = f.read()
+        f.close()
+        # print html
+        return html
+    except:
+        return "Finance information unavailable"

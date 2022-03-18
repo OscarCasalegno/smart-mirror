@@ -64,8 +64,13 @@ def credentials_to_dict(credentials):
             'scopes': credentials.scopes}
 
 
-def format_duration(duration):
-    seconds = duration.total_seconds()
+def format_duration(duration=None, seconds=None):
+    if seconds is None and duration is None:
+        return "-"
+
+    if seconds is None:
+        seconds = duration.total_seconds()
+
     if seconds > 60*60*24:
         return str(duration)
     minutes = seconds/60
@@ -79,7 +84,7 @@ def format_duration(duration):
     if hours == 1:
         formatted += "{h:.0f}h".format(h=hours)
     if hours > 0 and minutes > 0:
-        formatted += " & "
+        formatted += "-"
     if minutes > 1:
         formatted += "{m:.0f}min".format(m=minutes)
     if minutes == 1:
