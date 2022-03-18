@@ -126,6 +126,10 @@
                 moveDown(document.getElementsByClassName("selected"));
                 break;
 
+            case 27: // esc
+                window.location.replace("/");
+                break;
+
             default: return;
         }
         e.preventDefault();

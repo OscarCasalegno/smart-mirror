@@ -37,13 +37,13 @@ function showTime(){
 }
 
 $(document).keydown(function(e) {
-      switch(e.which) {
-          case 84: // T
-			  window.location.replace("/selector");
-          break;
+    switch(e.which) {
+        case 84: // T
+            window.location.replace("/selector");
+            break;
 
-         default: return;
-     }
-     e.preventDefault();
-  });
+        default: return;
+    }
+    e.preventDefault();
+});
 
