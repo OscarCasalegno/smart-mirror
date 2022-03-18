@@ -29,8 +29,10 @@ if me is not None:
 else:
     print "Mirror not registered"
 
+
 def get_mirror():
     return me
+
 
 def get_users():
     linked_users = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id).all()
@@ -182,7 +184,7 @@ def show_template(user_id):
     if user_id == "no_face":
         return render_template("no_face.html")
     if user_id == "unknown":
-        return render_template("unknown.html")
+        return render_template("registered_user.html", user=None, layout=mirror_unknown_html_handler())
 
     user = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id, User.id == user_id).all()
 
@@ -219,6 +221,19 @@ def mirror_html_handler(user_id):
 
     for k, v in layout.items():
         payload[k] = widget_html_handler(v, user, me)
+
+    payload["text"] = layout["text"]
+
+    print json.dumps(payload)
+    return payload
+
+
+def mirror_unknown_html_handler():
+    layout = json.loads(me.standard_layout)
+    payload = {}
+
+    for k, v in layout.items():
+        payload[k] = widget_html_handler(v, None, me)
 
     payload["text"] = layout["text"]
 
