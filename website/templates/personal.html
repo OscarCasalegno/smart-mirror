@@ -3,8 +3,9 @@
     Personal Page
 {% endblock %}
 {% block content %}
-    <h1> Ciao {{ current_user.name }} {{ current_user.surname }}</h1>
-    <h1> Ciao {{ current_user.username }}</h1>
-    <h1> Ciao {{ current_user.email_address }}</h1>
-    <h1> Specchi: {{ current_user.mirrors }}</h1>
+    <div class="container">
+        <h1> Ciao {{ current_user.username }}</h1>
+        <h1> Specchi: {{ current_user.mirrors }}</h1>
+    </div>
+    <div class="py-5"></div>
 {% endblock %}

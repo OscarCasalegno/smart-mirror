@@ -164,7 +164,8 @@ def about_page():
 @app.route('/personal')
 def personal_page():
     if current_user.is_authenticated:
-        return render_template('personal.html')
+        #return render_template('personal.html')
+        return redirect(url_for('mirrors_page'))
     else:
         flash("To access personal pages please authenticate yourself!", category='warning')
         return redirect(url_for('login_page'))
