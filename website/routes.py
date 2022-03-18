@@ -146,8 +146,13 @@ def g_callback_page():
         flash('Success! You are logged in as: {0}, this account is now linked to Google!'.format(attempted_user.username), category='success')
 
     else:
-        user_to_create = User(name=g_name, surname=g_surname, username=g_username,
-                              email_address=g_email, g_email_address=g_email, password=os.urandom(15), credentials=g_credential)
+        user_to_create = None
+        while user_to_create is None:
+            try:
+                user_to_create = User(name=g_name, surname=g_surname, username=g_username,
+                                      email_address=g_email, g_email_address=g_email, password=os.urandom(15), credentials=g_credential)
+            except:
+                print "Retrying user creation"
         db.session.add(user_to_create)
         db.session.commit()
         login_user(user_to_create)
