@@ -32,11 +32,18 @@ else:
 def get_mirror():
     return me
 
+@mirror_app.route('/get_users')
 def get_users():
     linked_users = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id).all()
     return linked_users
 
+@mirror_app.route('/get_recognisable_users')
+def get_not_recognisable_users():
+    recognisable_users = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id,
+                                                                          Relation.recognisable == True).all()
+    return recognisable_users
 
+@mirror_app.route('/get_not_recognisable_users')
 def get_not_recognisable_users():
     not_recognisable_users = db.session.query(User).join(Relation).filter(Relation.mirror_id == me.id,
                                                                           Relation.recognisable == False).all()

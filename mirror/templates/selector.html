@@ -37,21 +37,72 @@
         .selected{
             background-color: grey;
         }
+        .selector{
+            display: none;
+            position: fixed;
+            height: 50%;
+            width: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            border: 2px solid white;
+            background-color: black;
+        }
+        table{
+            width: 100%;
+            height: 100%;
+        }
+        td{
+            text-transform: uppercase;
+            text-align: center;
+            font-family: "Lucida Console";
+            font-size: 3vw;
+            border: 2px solid white;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="main">
         <div id="1" class="selection selected">Retrain model</div>
         <div id="2" class="selection">Add new face</div>
         <div id="3" class="selection">Remove face</div>
     </div>
+    <div class="selector" id="2_selector" ">
+        <table>
+            <tbody id="2_list">
+            <tr><td class="selected">cancel</td></tr>
+            <tr><td id="user1_id">user1_name</td></tr>
+            <tr><td id="user2_id">user2_name</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="selector" id="3_selector" ">
+        <table>
+            <tbody id="3_list">
+            <tr><td class="selected">cancel</td></tr>
+            <tr><td id="user3_id">user3_name</td></tr>
+            <tr><td id="user4_id">user4_name</td></tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <script>
+
+
+
+
+    var main_children = document.getElementById("main").children;
+    var sel2_children = document.getElementById("2_list").children;
+    var sel3_children = document.getElementById("3_list").children;
+    var current_main=0;
+    var current_sel2=0;
+    var current_sel3=0;
+
     $(document).keydown(function(e) {
       switch(e.which) {
           case 13: // enter
-              selectCurrentSection(document.getElementsByClassName("selected"));
+              selectCurrentSection();
           break;
 
          case 38: // up
@@ -67,30 +118,71 @@
      e.preventDefault();
   });
 
-function moveUp(selected){
-    let current = parseInt(selected[0].id);
-    if (current!=1){
-        selected[0].classList.remove("selected")
-        document.getElementById(String(current-1)).classList.add("selected")
-    }
-}
-function moveDown(selected){
-    let current = parseInt(selected[0].id);
-    if (current!=3){
-        selected[0].classList.remove("selected")
-        document.getElementById(String(current+1)).classList.add("selected")
-    }
-}
-function selectCurrentSection(selected){
-    let current = parseInt(selected[0].id);
-    if(current==1){
-        alert("retrain");
-    }else if(current==2){
-        alert("add");
-    }else if(current==3){
-        alert("remove");
+    function moveDown(){
+        if(document.getElementById("2_selector").style.display == "block"){
+            if(current_sel2 != (sel2_children.length-1)){
+                sel2_children[current_sel2].firstChild.classList.remove("selected");
+                sel2_children[++current_sel2].firstChild.classList.add("selected");
+            }
+        }else if(document.getElementById("3_selector").style.display == "block"){
+            if(current_sel3 != (sel3_children.length-1)){
+                sel3_children[current_sel3].firstChild.classList.remove("selected");
+                sel3_children[++current_sel3].firstChild.classList.add("selected");
+            }
+        }else{
+            if(current_main != (main_children.length-1)){
+                main_children[current_main].classList.remove("selected");
+                main_children[++current_main].classList.add("selected");
+            }
+        }
     }
 
+function moveUp(){
+    if(document.getElementById("2_selector").style.display == "block"){
+            if(current_sel2 != 0){
+                sel2_children[current_sel2].firstChild.classList.remove("selected");
+                sel2_children[--current_sel2].firstChild.classList.add("selected");
+            }
+        }else if(document.getElementById("3_selector").style.display == "block"){
+            if(current_sel3 != 0){
+                sel3_children[current_sel3].firstChild.classList.remove("selected");
+                sel3_children[--current_sel3].firstChild.classList.add("selected");
+            }
+        }else{
+            if(current_main != 0){
+                main_children[current_main].classList.remove("selected");
+                main_children[--current_main].classList.add("selected");
+            }
+        }
 }
+
+
+
+    function selectCurrentSection(){
+        if(document.getElementById("2_selector").style.display == "block"){
+            alert(current_sel2);
+            closeSelector();
+        }else if(document.getElementById("3_selector").style.display == "block"){
+            alert(current_sel3);
+            closeSelector();
+        }else{
+            showSelector();
+        }
+}
+
+function showSelector(){
+    document.getElementById("main").style.opacity = "25%";
+    if(current_main==1){
+        document.getElementById("2_selector").style.display = "block";
+    }else{
+        document.getElementById("3_selector").style.display = "block";
+    }
+}
+    function closeSelector() {
+        document.getElementById("main").style.opacity = "100%";
+        document.getElementById("2_selector").style.display = "none"
+        document.getElementById("3_selector").style.display = "none"
+    }
+
 </script>
 </html>
