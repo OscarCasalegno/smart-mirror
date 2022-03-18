@@ -141,6 +141,11 @@ def remove_face(user_id):
     return redirect(url_for('mirror'))
 
 
+@mirror_app.route('/selector')
+def selector_page():
+    return render_template("selector.html")
+
+
 @mirror_app.route('/train')
 def train_page():
     train()

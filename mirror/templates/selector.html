@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Choose the person to add to the mirror</title>
+    <style>
+        body{
+            display: flex;
+            background-color: black;
+            color:white;
+            align-items: center;
+            overflow: hidden;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(3, 1fr);
+            gap: 0px 0px;
+            grid-template-areas:
+                    "."
+                    "."
+                    ".";
+            width: 95vw;
+            height: 95vh;
+            padding-left: 2.5vw;
+            padding-right: 2.5vw;
+            padding-top: 2.5vh;
+            padding-bottom: 2.5vh;
+        }
+        .selection{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Lucida Console";
+            font-size: 4vw;
+        }
+        .selected{
+            background-color: grey;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="1" class="selection selected">Retrain model</div>
+        <div id="2" class="selection">Add new face</div>
+        <div id="3" class="selection">Remove face</div>
+    </div>
+</body>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    $(document).keydown(function(e) {
+      switch(e.which) {
+          case 13: // enter
+              selectCurrentSection(document.getElementsByClassName("selected"));
+          break;
+
+         case 38: // up
+             moveUp(document.getElementsByClassName("selected"));
+         break;
+
+         case 40: // down
+             moveDown(document.getElementsByClassName("selected"));
+         break;
+
+         default: return;
+     }
+     e.preventDefault();
+  });
+
+function moveUp(selected){
+    let current = parseInt(selected[0].id);
+    if (current!=1){
+        selected[0].classList.remove("selected")
+        document.getElementById(String(current-1)).classList.add("selected")
+    }
+}
+function moveDown(selected){
+    let current = parseInt(selected[0].id);
+    if (current!=3){
+        selected[0].classList.remove("selected")
+        document.getElementById(String(current+1)).classList.add("selected")
+    }
+}
+function selectCurrentSection(selected){
+    let current = parseInt(selected[0].id);
+    if(current==1){
+        alert("retrain");
+    }else if(current==2){
+        alert("add");
+    }else if(current==3){
+        alert("remove");
+    }
+
+}
+</script>
+</html>

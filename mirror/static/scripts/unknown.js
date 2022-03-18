@@ -22,3 +22,14 @@ function resize_to_fit(n) {
 		resize_to_fit(n-0.5);
 	  }
 }
+
+$(document).keydown(function(e) {
+      switch(e.which) {
+          case 84: // T
+			  window.location.replace("/selector");
+          break;
+
+         default: return;
+     }
+     e.preventDefault();
+  });
