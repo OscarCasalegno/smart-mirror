@@ -11,3 +11,14 @@ function faceCheck(n) {
 		}
     });
 }
+
+$(document).keydown(function(e) {
+      switch(e.which) {
+          case 84: // T
+			  window.location.replace("/selector");
+          break;
+
+         default: return;
+     }
+     e.preventDefault();
+  });

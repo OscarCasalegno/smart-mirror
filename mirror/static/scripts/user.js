@@ -36,3 +36,14 @@ function showTime(){
     setTimeout(showTime, 1000);
 }
 
+$(document).keydown(function(e) {
+      switch(e.which) {
+          case 84: // T
+			  window.location.replace("/selector");
+          break;
+
+         default: return;
+     }
+     e.preventDefault();
+  });
+

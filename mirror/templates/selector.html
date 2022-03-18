@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Choose the person to add to the mirror</title>
+    <style>
+        body{
+            display: flex;
+            background-color: black;
+            color:white;
+            align-items: center;
+            overflow: hidden;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: repeat(3, 1fr);
+            gap: 0px 0px;
+            grid-template-areas:
+                    "."
+                    "."
+                    ".";
+            width: 95vw;
+            height: 95vh;
+            padding-left: 2.5vw;
+            padding-right: 2.5vw;
+            padding-top: 2.5vh;
+            padding-bottom: 2.5vh;
+        }
+        .selection{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Lucida Console";
+            font-size: 4vw;
+        }
+        .selected{
+            background-color: grey;
+        }
+        .selector{
+            display: none;
+            position: fixed;
+            height: 50%;
+            width: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            border: 2px solid white;
+            background-color: black;
+        }
+        table{
+            width: 100%;
+            height: 100%;
+        }
+        td{
+            text-transform: uppercase;
+            text-align: center;
+            font-family: "Lucida Console";
+            font-size: 3vw;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main">
+        <div id="1" class="selection selected">Retrain model</div>
+        <div id="2" class="selection">Add new face</div>
+        <div id="3" class="selection">Remove face</div>
+    </div>
+    <div class="selector" id="2_selector">
+        <table>
+            <tbody id="2_list" onload="populate(this.id)">
+            <tr><td class="selected">cancel</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="selector" id="3_selector">
+        <table>
+            <tbody id="3_list" onload="populate(this.id)">
+            <tr><td class="selected">cancel</td></tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    function populate(id){
+        if(id=="2_list"){
+            $.get('/get_not_recognisable_users',
+                function(data) {
+                    for(const user_id of data.keys()) {
+                        document.getElementById(id).insertAdjacentHTML("beforeend", '<tr><td id="' + user_id + '">' + data[user_id] + '</td></tr>');
+                    }
+                }
+            );
+        }else if(id=="3_list"){
+            $.get('/get_recognisable_users',
+                function(data) {
+                    for(const user_id of data.keys()) {
+                        document.getElementById(id).insertAdjacentHTML("beforeend", '<tr><td id="' + user_id + '">' + data[user_id] + '</td></tr>');
+                    }
+                }
+            );
+        }
+
+    }
+
+    var main_children = document.getElementById("main").children;
+    var sel2_children = document.getElementById("2_list").children;
+    var sel3_children = document.getElementById("3_list").children;
+    var current_main=0;
+    var current_sel2=0;
+    var current_sel3=0;
+
+    $(document).keydown(function(e) {
+      switch(e.which) {
+          case 13: // enter
+              selectCurrentSection();
+          break;
+
+         case 38: // up
+             moveUp(document.getElementsByClassName("selected"));
+         break;
+
+         case 40: // down
+             moveDown(document.getElementsByClassName("selected"));
+         break;
+
+         default: return;
+     }
+     e.preventDefault();
+  });
+
+    function moveDown(){
+        if(document.getElementById("2_selector").style.display == "block"){
+            if(current_sel2 != (sel2_children.length-1)){
+                sel2_children[current_sel2].firstChild.classList.remove("selected");
+                sel2_children[++current_sel2].firstChild.classList.add("selected");
+            }
+        }else if(document.getElementById("3_selector").style.display == "block"){
+            if(current_sel3 != (sel3_children.length-1)){
+                sel3_children[current_sel3].firstChild.classList.remove("selected");
+                sel3_children[++current_sel3].firstChild.classList.add("selected");
+            }
+        }else{
+            if(current_main != (main_children.length-1)){
+                main_children[current_main].classList.remove("selected");
+                main_children[++current_main].classList.add("selected");
+            }
+        }
+    }
+
+function moveUp(){
+    if(document.getElementById("2_selector").style.display == "block"){
+            if(current_sel2 != 0){
+                sel2_children[current_sel2].firstChild.classList.remove("selected");
+                sel2_children[--current_sel2].firstChild.classList.add("selected");
+            }
+        }else if(document.getElementById("3_selector").style.display == "block"){
+            if(current_sel3 != 0){
+                sel3_children[current_sel3].firstChild.classList.remove("selected");
+                sel3_children[--current_sel3].firstChild.classList.add("selected");
+            }
+        }else{
+            if(current_main != 0){
+                main_children[current_main].classList.remove("selected");
+                main_children[--current_main].classList.add("selected");
+            }
+        }
+}
+
+
+
+    function selectCurrentSection(){
+        if(document.getElementById("2_selector").style.display == "block"){
+            if(current_sel2==0){
+                closeSelector();
+            }else{
+                let url = "/add_face/"+sel2_children[current_sel2].firstChild.id;
+                window.location.replace(url);
+            }
+        }else if(document.getElementById("3_selector").style.display == "block"){
+            if(current_sel3==0){
+                closeSelector();
+            }else{
+                let url = "/remove_face/"+sel3_children[current_sel3].firstChild.id;
+                window.location.replace(url);
+            }
+        }else if(current_main==0){
+            window.location.replace("/train")
+        }else{
+            showSelector();
+        }
+}
+
+function showSelector(){
+    document.getElementById("main").style.opacity = "25%";
+    if(current_main==1){
+        document.getElementById("2_selector").style.display = "block";
+    }else{
+        document.getElementById("3_selector").style.display = "block";
+    }
+}
+    function closeSelector() {
+        document.getElementById("main").style.opacity = "100%";
+        document.getElementById("2_selector").style.display = "none"
+        document.getElementById("3_selector").style.display = "none"
+    }
+
+</script>
+</html>
