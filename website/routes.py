@@ -10,7 +10,7 @@ from sqlalchemy.sql.operators import mirror
 
 import website
 from website import app, db, mail, get_google_provider_cfg, client, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
-from website.forms import RegisterForm, LoginForm, UpdateForm, RegisterMirrorForm, LinkMirrorForm, EditMirrorForm
+from website.forms import RegisterForm, LoginForm, UpdateForm, RegisterMirrorForm, LinkMirrorForm, EditMirrorForm, LayoutForm
 from website.models import User, Mirror, Relation
 from website import api_manager, mail_manager
 from website import google_calendar_api
@@ -191,6 +191,48 @@ def info_page():
     else:
         flash("To access personal pages please authenticate yourself!", category='warning')
         return redirect(url_for('login_page'))
+
+
+@app.route('/layout/<mirror_id>', methods=['GET', 'POST'])
+def layout_page(mirror_id):                                   #DA GESTIRE CENTROLLO SPECCHIO
+    if current_user.is_authenticated:
+        # Retrieve the mirror (handling errors)
+        mirror = Mirror.query.filter_by(id=mirror_id).first()
+        if mirror is None:
+            flash("No such mirror in our BD, try to register the mirror first!", category='warning')
+            return flask.redirect(url_for("mirrors_page"))
+
+        relation = Relation.query.filter_by(mirror=mirror, user=current_user).first()
+        if relation is None:
+            flash("You are not authorized to view this mirror, please register it first!", category='warning')
+            return flask.redirect(url_for("mirrors_page"))
+
+        form = LayoutForm()
+        if form.validate_on_submit():
+
+            layout_new = {"top-left": form.top_left_choice.data, "center-left": form.center_left_choice.data, "bottom-left": form.bottom_left_choice.data,
+             "top-right": form.top_right_choice.data, "center-right": form.center_right_choice.data, "bottom-right": form.bottom_right_choice.data,
+             "text": form.text_choice.data}
+
+            relation.layout = json.dumps(layout_new)
+            print json.dumps(layout_new)
+            db.session.commit()
+
+            flash('Success! Your Layout for {mirror} has been updated!'.format(mirror=mirror.__repr__()), category='success')
+            return redirect(url_for('mirrors_page'))
+
+        #layout_base = {"top-left": "", "center-left": "", "bottom-left": "",
+        #     "top-right": "", "center-right": "", "bottom-right": "",
+        #     "text": "Hello!"}
+        #print json.dumps(layout_base)
+        layout_base = json.loads(relation.layout)
+
+        return render_template('choice.html', form=form, layout=layout_base)
+
+    else:
+        flash("To access personal pages please authenticate yourself!", category='warning')
+        return redirect(url_for('login_page'))
+
 
 
 @app.route('/mirrors')

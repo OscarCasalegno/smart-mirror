@@ -1,0 +1,95 @@
+{% extends 'base_per.html' %}  <!--Da creare nuova base per backend!!-->
+{% block head %}
+    <link rel="stylesheet" href={{ url_for('static', filename='choice.css') }}>
+{% endblock %}
+{% block title %}
+    Personal Page
+{% endblock %}
+{% block content %}
+    <div id="inner-body">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="container" >
+            <div class="top-left" id="top-left" onclick="showMenu(this.id)"><label for="top-left-choice">{{ layout["top-left"] }}</label> {{ form.top_left_choice( value=layout["top-left"] ) }}</div>
+            <div class="center-left" id="center-left" onclick="showMenu(this.id)"><label for="center-left-choice">{{ layout["center-left"] }}</label> {{ form.center_left_choice( value=layout["center-left"] ) }}</div>
+            <div class="bottom-left" id="bottom-left" onclick="showMenu(this.id)"><label for="bottom-left-choice">{{ layout["bottom-left"] }}</label> {{ form.bottom_left_choice( value=layout["bottom-left"] ) }}</div>
+
+            <div class="top-right" id="top-right" onclick="showMenu(this.id)"><label for="top-right-choice">{{ layout["top-right"] }}</label> {{ form.top_right_choice( value=layout["top-right"] ) }}</div>
+            <div class="center-right" id="center-right" onclick="showMenu(this.id)"><label for="center-right-choice">{{ layout["center-right"] }}</label> {{ form.center_right_choice( value=layout["center-right"] ) }}</div>
+            <div class="bottom-right" id="bottom-right" onclick="showMenu(this.id)"><label for="bottom-right-choice">{{ layout["bottom-right"] }}</label> {{ form.bottom_right_choice( value=layout["bottom-right"] ) }}</div>
+
+            <div class="reflection-top" id="reflection-top"></div>
+            <div class="reflection-center" id="reflection-center" ></div>
+
+            <div class="reflection-bottom" id="reflection-bottom" >
+                <div class="text-area" id="text-area" onclick="writeText(this.id)">{{ layout["text"] }}</div>
+                {{ form.text_choice( value=layout["text"] ) }}
+            </div>
+        </div>
+        {{ form.layout_submit(class="submit") }}
+    </form>
+    <div id="myNav" class="overlay">
+        <a class="closebtn" onclick="closeMenu()">&times;</a>
+        <div class="overlay-content">
+            <a id="" onclick="selection(this.id)" href="#">NONE</a>
+            <a id="WIDGET" onclick="selection(this.id)" href="#">WIDGET</a>
+            <a id="CLOCK" onclick="selection(this.id)" href="#">CLOCK</a>
+            <a id="CLOCK & DATE" onclick="selection(this.id)" href="#">CLOCK & DATE</a>
+            <a id="WEATHER" onclick="selection(this.id)" href="#">WEATHER</a>
+            <a id="CALENDAR" onclick="selection(this.id)" href="#">CALENDAR</a>
+            <a id="AGENDA" onclick="selection(this.id)" href="#">AGENDA</a>
+            <a id="FINANCE" onclick="selection(this.id)" href="#">FINANCE</a>
+        </div>
+    </div>
+    </div>
+{% endblock %}
+{% block script %}
+    <script>
+        var el;
+
+        function showMenu(id){
+            document.getElementById("myNav").style.width = "100%";
+            el = document.getElementById(id);
+
+        }
+
+        function selection(id){
+            var label= el.firstChild;
+            label.innerHTML = id;
+            var input = el.lastChild;
+            input.setAttribute('value',id);
+            closeMenu();
+        }
+
+        function closeMenu() {
+            document.getElementById("myNav").style.width = "0%";
+        }
+
+        function writeText(id){
+            var text = prompt("Please enter the text to be showed (max 20 char)");
+            if(text.length > 20){
+                alert('text too long')
+            }else{
+                document.getElementById(id).innerHTML = text;
+                document.getElementById("text-choice").setAttribute('value',text);
+                resize_to_fit(10);
+            }
+        }
+
+        function resize_to_fit(n) {
+            var div = document.getElementById("text-area");
+            div.style.fontSize = (n) + "vw";
+
+            if (n == 0) {
+                div.style.fontSize = "16px";
+                return 0;
+            }
+
+            else if (div.scrollHeight >= div.offsetHeight) {
+                resize_to_fit(n-1);
+            }
+
+        }
+        resize_to_fit(10);
+    </script>
+{% endblock %}

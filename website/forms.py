@@ -42,6 +42,20 @@ class UpdateForm(FlaskForm):
     submit = SubmitField(label='Update Values')
 
 
+class LayoutForm(FlaskForm):
+    top_left_choice = StringField(id='top-left-choice')
+    center_left_choice = StringField(id='center-left-choice')
+    bottom_left_choice = StringField(id='bottom-left-choice')
+
+    top_right_choice = StringField(id='top-right-choice')
+    center_right_choice = StringField(id='center-right-choice')
+    bottom_right_choice = StringField(id='bottom-right-choice')
+
+    text_choice = StringField(id='text-choice')
+
+    layout_submit = SubmitField(label='Save Layout')
+
+
 class RegisterMirrorForm(FlaskForm):
     product_code = StringField(label='Product Code:', validators=[DataRequired(), Length(min=2, max=30)])
     secret_code = StringField(label='Secret Code:', validators=[DataRequired(), Length(min=10, max=10)])
