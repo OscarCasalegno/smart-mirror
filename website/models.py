@@ -53,7 +53,7 @@ class Mirror(db.Model):
     product_code = db.Column(db.String(length=40), nullable=False)
     secret_code = db.Column(db.String(length=10), nullable=False)
     model = db.Column(db.String(length=40))
-    preferences = db.Column(db.Text())
+    standard_layout = db.Column(db.Text(), default='{"top-left": "", "center-left": "", "bottom-left": "", "top-right": "", "center-right": "", "bottom-right": "","text": "Hello!"}')
     location = db.Column(db.Text())
     name = db.Column(db.String(length=40))
     #users = relationship("User", secondary="relations", back_populates="mirrors") #Already in User

@@ -3,17 +3,16 @@ import os
 
 import flask
 import googleapiclient
+from googleapiclient import sample_tools
 import requests
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
-from sqlalchemy.sql.operators import mirror
 
 import website
 from website import app, db, mail, get_google_provider_cfg, client, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 from website.forms import RegisterForm, LoginForm, UpdateForm, RegisterMirrorForm, LinkMirrorForm, EditMirrorForm, LayoutForm
 from website.models import User, Mirror, Relation
 from website import api_manager, mail_manager
-from website import google_calendar_api
 from pprint import pprint
 from datetime import datetime
 
@@ -147,8 +146,13 @@ def g_callback_page():
         flash('Success! You are logged in as: {0}, this account is now linked to Google!'.format(attempted_user.username), category='success')
 
     else:
-        user_to_create = User(name=g_name, surname=g_surname, username=g_username,
-                              email_address=g_email, g_email_address=g_email, password=os.urandom(15), credentials=g_credential)
+        user_to_create = None
+        while user_to_create is None:
+            try:
+                user_to_create = User(name=g_name, surname=g_surname, username=g_username,
+                                      email_address=g_email, g_email_address=g_email, password=os.urandom(15), credentials=g_credential)
+            except:
+                print "Retrying user creation"
         db.session.add(user_to_create)
         db.session.commit()
         login_user(user_to_create)
@@ -165,7 +169,8 @@ def about_page():
 @app.route('/personal')
 def personal_page():
     if current_user.is_authenticated:
-        return render_template('personal.html')
+        #return render_template('personal.html')
+        return redirect(url_for('mirrors_page'))
     else:
         flash("To access personal pages please authenticate yourself!", category='warning')
         return redirect(url_for('login_page'))
@@ -233,6 +238,44 @@ def layout_page(mirror_id):                                   #DA GESTIRE CENTRO
         flash("To access personal pages please authenticate yourself!", category='warning')
         return redirect(url_for('login_page'))
 
+
+@app.route('/standard_layout/<mirror_id>', methods=['GET', 'POST'])
+def standard_layout_page(mirror_id):
+    if current_user.is_authenticated:
+        # Retrieve the mirror (handling errors)
+        mirror = Mirror.query.filter_by(id=mirror_id).first()
+        if mirror is None:
+            flash("No such mirror in our BD, try to register the mirror first!", category='warning')
+            return flask.redirect(url_for("mirrors_page"))
+
+        relation = Relation.query.filter_by(mirror=mirror, user=current_user, ownership=True).first()
+        if relation is None:
+            flash("You are not the owner of this mirror.", category='warning')
+            return flask.redirect(url_for("mirrors_page"))
+
+        form = LayoutForm()
+        if form.validate_on_submit():
+            layout_new = {"top-left": form.top_left_choice.data, "center-left": form.center_left_choice.data,
+                          "bottom-left": form.bottom_left_choice.data,
+                          "top-right": form.top_right_choice.data, "center-right": form.center_right_choice.data,
+                          "bottom-right": form.bottom_right_choice.data,
+                          "text": form.text_choice.data}
+
+            mirror.standard_layout = json.dumps(layout_new)
+            print json.dumps(layout_new)
+            db.session.commit()
+
+            flash('Success! Your Standard Layout for {mirror} has been updated!'.format(mirror=mirror.__repr__()),
+                  category='success')
+            return redirect(url_for('mirrors_page'))
+
+        layout_base = json.loads(mirror.standard_layout)
+
+        return render_template('choice_standard.html', form=form, layout=layout_base)
+
+    else:
+        flash("To access personal pages please authenticate yourself!", category='warning')
+        return redirect(url_for('login_page'))
 
 
 @app.route('/mirrors')

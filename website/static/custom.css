@@ -8,6 +8,11 @@
     text-align: center;
     padding: 32vh 0;
 }
+
+.full {
+    width: 100%;
+}
+
 .background-1 {
     /*Background*/
     background-image: url(mirror1.jpg);
