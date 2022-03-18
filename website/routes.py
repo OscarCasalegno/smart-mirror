@@ -3,17 +3,16 @@ import os
 
 import flask
 import googleapiclient
+from googleapiclient import sample_tools
 import requests
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user
-from sqlalchemy.sql.operators import mirror
 
 import website
 from website import app, db, mail, get_google_provider_cfg, client, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
 from website.forms import RegisterForm, LoginForm, UpdateForm, RegisterMirrorForm, LinkMirrorForm, EditMirrorForm, LayoutForm
 from website.models import User, Mirror, Relation
 from website import api_manager, mail_manager
-from website import google_calendar_api
 from pprint import pprint
 from datetime import datetime
 
