@@ -22,7 +22,7 @@ User = Base.classes.user
 Mirror = Base.classes.mirror
 Relation = Base.classes.relations
 
-product_code = 2222
+product_code = 11 #2222
 
 me = db.session.query(Mirror).filter(Mirror.product_code == product_code).first()
 if me is not None:

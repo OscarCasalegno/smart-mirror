@@ -84,6 +84,10 @@ def agenda_html_handler(user, mirror):
         event_structure = u'<li ><div class="event"><div class="hour">{start_m}-{end_m}</div><div class="description">{name}</div><div class="travel">🚗{duration}</div></div></li>'
 
         events = api.get_google_events(user)
+        if events is None:
+            html = html.replace("XXX_EVENTS_XXX", "To use the Agenda widget, link your account to Google")
+            return html
+
         html_events = ""
         for event in events["items"]:
             name = event["summary"]

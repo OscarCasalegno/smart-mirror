@@ -1,7 +1,7 @@
 import google
 import googleapiclient
 import json
-from datetime import datetime
+from datetime import datetime, date, time
 import google.oauth2.credentials
 import googleapiclient.discovery
 import googlemaps
@@ -20,11 +20,12 @@ def get_google_events(user):
     print "Credentials db: {}".format(credentials.to_json())
 
     calendar = googleapiclient.discovery.build("calendar", "v3", credentials=credentials)
-
-    all_calendars = calendar.calendarList().list().execute()
+    #all_calendars = calendar.calendarList().list().execute()
     calendar_id = "primary"  # all_calendars["items"][1]["id"]
 
-    events = calendar.events().list(calendarId=calendar_id, timeMin=datetime.utcnow().isoformat()+"Z", singleEvents=True, orderBy="startTime").execute()
+    end = datetime.combine(datetime.now(), time.max)
+
+    events = calendar.events().list(calendarId=calendar_id, timeMin=datetime.utcnow().isoformat()+"Z", timeMax=end.isoformat()+"Z", singleEvents=True, orderBy="startTime").execute()
     print "Events: {}".format(events)
 
     user.credentials = json.dumps(credentials_to_dict(credentials))
