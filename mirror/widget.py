@@ -4,6 +4,7 @@ import io
 from FacesClass import path_getter
 import api
 from dateutil.parser import parse
+from datetime import date
 
 
 def widget_html_handler(widget, user, mirror):
@@ -38,11 +39,23 @@ def clock_html_handler():
 
 
 def weather_html_handler(mirror):
+    if not mirror.location:
+        return "To see the weather, set the location of the mirror!"
+
     try:
         location = api.get_geocode(address=mirror.location)
         lat = location[0]["geometry"]["location"]["lat"]
         lng = location[0]["geometry"]["location"]["lng"]
-        city = location[0]["address_components"][3]["short_name"]
+        city = ""
+        for detail in location[0]["address_components"]:
+            if city:
+                break
+            for type in detail["types"]:
+                if city:
+                    break
+                if type == "administrative_area_level_3":
+                    city = detail["short_name"]
+        #city = location[0]["address_components"][3]["short_name"]
     except:
         return "Weather unavailable"
 
@@ -64,10 +77,14 @@ def agenda_html_handler(user, mirror):
         html = f.read()
         f.close()
 
+        today = date.today()
+        text_today = today.strftime("%A %d %B, %Y")
+        html = html.replace("XXX_TODAY_XXX", text_today)
+
         event_structure = u'<li ><div class="event"><div class="hour">{start_m}-{end_m}</div><div class="description">{name}</div><div class="travel">🚗{duration}</div></div></li>'
 
         events = api.get_google_events(user)
-        html_events=""
+        html_events = ""
         for event in events["items"]:
             name = event["summary"]
             try:
@@ -77,7 +94,7 @@ def agenda_html_handler(user, mirror):
             start = parse(event["start"]["dateTime"])
             end = parse(event["end"]["dateTime"])
 
-            if location != "":
+            if location != "" and mirror.location:
                 by = "driving"
                 path = api.get_distance(mirror.location, location, by)
                 duration = path["rows"][0]["elements"][0]["duration"]["value"]
@@ -89,7 +106,7 @@ def agenda_html_handler(user, mirror):
             start_m = str(start.time())[0:5]
             end_m = str(end.time())[0:5]
 
-            html_events+=event_structure.format(start_m=start_m, end_m=end_m, name=name, duration=duration)
+            html_events += event_structure.format(start_m=start_m, end_m=end_m, name=name, duration=duration)
 
         html = html.replace("XXX_EVENTS_XXX", html_events)
         return html

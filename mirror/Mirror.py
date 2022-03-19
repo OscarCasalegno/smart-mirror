@@ -22,7 +22,8 @@ User = Base.classes.user
 Mirror = Base.classes.mirror
 Relation = Base.classes.relations
 
-product_code = 11
+product_code = 2222
+
 me = db.session.query(Mirror).filter(Mirror.product_code == product_code).first()
 if me is not None:
     print "I am", me.id
@@ -31,7 +32,7 @@ else:
 
 
 def get_mirror():
-    return me
+    return db.session.query(Mirror).filter(Mirror.product_code == product_code).first()
 
 
 @mirror_app.route('/get_users')
@@ -114,11 +115,6 @@ def test():
     return jsonify(**events)
 
 
-@mirror_app.route('/initialize')
-def initiation():
-    print "hello"
-
-
 @mirror_app.route('/')
 def mirror():
     return redirect(url_for('show_template', user_id='no_face'))
@@ -126,6 +122,9 @@ def mirror():
 
 @mirror_app.route('/add_face/<user_id>')
 def add_face(user_id):
+    if me is None:
+        return redirect(url_for('register'))
+
     relation = db.session.query(Relation).filter(Relation.mirror_id == me.id, Relation.user_id == user_id).all()
     if len(relation) != 1:
         print "Error!\nUser {} not linked".format(user_id)
@@ -145,6 +144,9 @@ def add_face(user_id):
 
 @mirror_app.route('/remove_face/<user_id>')
 def remove_face(user_id):
+    if me is None:
+        return redirect(url_for('register'))
+
     relation = db.session.query(Relation).filter(Relation.mirror_id == me.id, Relation.user_id == user_id).all()
     if len(relation) != 1:
         print "Error!\nUser {} not linked".format(user_id)
@@ -244,7 +246,7 @@ def mirror_html_handler(user_id):
     payload = {}
 
     for k, v in layout.items():
-        payload[k] = widget_html_handler(v, user, me)
+        payload[k] = widget_html_handler(v, user, get_mirror())
 
     payload["text"] = layout["text"]
 
@@ -253,11 +255,11 @@ def mirror_html_handler(user_id):
 
 
 def mirror_unknown_html_handler():
-    layout = json.loads(me.standard_layout)
+    layout = json.loads(get_mirror().standard_layout)
     payload = {}
 
     for k, v in layout.items():
-        payload[k] = widget_html_handler(v, None, me)
+        payload[k] = widget_html_handler(v, None, get_mirror())
 
     payload["text"] = layout["text"]
 

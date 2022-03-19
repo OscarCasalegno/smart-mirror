@@ -1,9 +1,6 @@
 body{
     background-color: black;
-    margin-top: 0;
-    margin-bottom: 0;
-    margin-left: 0;
-    margin-right: 0;
+	margin: 0;
 	animation: fadeInAnimation ease 3s;
 	animation-fill-mode: forwards;
 }
@@ -27,7 +24,7 @@ body{
 .container {  display: grid;
   color: white;
   grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
   gap: 1px 1px;
   grid-auto-flow: row;
   width: 100vw; 
@@ -57,7 +54,7 @@ body{
 .reflection-bottom {
 display: grid; 
   grid-template-columns: 1fr; 
-  grid-template-rows: repeat(2, 1fr); 
+  grid-template-rows: auto auto;
   gap: 0px 0px; 
   grid-template-areas: 
     "."
@@ -82,6 +79,12 @@ display: grid;
 		transform: translateX(-50%) translateY(-50%);
 		color: white;
 		font-size: 60px;
-		font-family: Lucida Console;
+		font-family: "Lucida Console";
 		letter-spacing: 7px;
+}
+
+.register {
+	color: white;
+	font-family: "Lucida Console";
+	text-align: center;
 }
