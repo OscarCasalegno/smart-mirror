@@ -47,6 +47,12 @@ class User(db.Model, UserMixin):
     def check_password_correction(self, attempted_password):
         return bcrypt.check_password_hash(self.password_hash, attempted_password)
 
+    def has_g_account(self):
+        if self.g_email_address:
+            return True
+        else:
+            return False
+
 
 class Mirror(db.Model):
     id = db.Column(db.Integer(), primary_key=True)

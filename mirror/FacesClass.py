@@ -53,7 +53,7 @@ class Faces:
             name = str(currentframe) + '.jpg'
 
             if start == False:
-                cv2.putText(frame, 'Press Enter to Start', (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2,
+                cv2.putText(frame, 'Press s to Start', (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2,
                             cv2.LINE_AA)
             else:
                 cv2.putText(frame, str(int(round(10 - (datetime.now() - t1).seconds))), (0, 25),
@@ -68,7 +68,7 @@ class Faces:
 
             cv2.imshow('frame', frame)
 
-            if cv2.waitKey(20) & 0xff == ord("\n"):
+            if cv2.waitKey(20) & 0xff == ord("s"):
                 start = True
                 t1 = datetime.now()
 
