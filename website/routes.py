@@ -126,8 +126,8 @@ def g_callback_page():
     print "info: {}".format(info)
 
     g_email = info["emailAddresses"][0]["value"]
-    g_name = info["names"][0]["familyName"]
-    g_surname = info["names"][0]["givenName"]
+    g_name = info["names"][0]["givenName"]
+    g_surname = info["names"][0]["familyName"]
     g_username = g_email.split('@')[0].replace(".", "_")
     g_picture = info["photos"][0]["url"]
     g_credential = json.dumps(credentials_to_dict(credentials))
@@ -215,8 +215,8 @@ def g_link_callback_page():
     print "info: {}".format(info)
 
     g_email = info["emailAddresses"][0]["value"]
-    g_name = info["names"][0]["familyName"]
-    g_surname = info["names"][0]["givenName"]
+    g_name = info["names"][0]["givenName"]
+    g_surname = info["names"][0]["familyName"]
     g_credential = json.dumps(credentials_to_dict(credentials))
 
     attempted_g_user = User.query.filter_by(g_email_address=g_email).first()
@@ -495,6 +495,11 @@ def edit_mirror_page(mirror_id):
             flash('Error during the process: {0}'.format(err_msg[0]), category='danger')
 
     return render_template("edit_mirror.html", form=form, relation=relation)
+
+
+@app.errorhandler(404)
+def error_404(error):
+    return render_template("ERROR_404.html"), 404
 
 
 @app.route('/test')

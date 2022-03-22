@@ -18,11 +18,12 @@ def load_user(user_id):
 #p1 = Product.query.first()
 #p1.users  # List all users who have bought this product, eg [<user1>, <user2>]
 
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
     username = db.Column(db.String(length=30), nullable=False, unique=True)
-    name = db.Column(db.String(length=30))      #TBD
-    surname = db.Column(db.String(length=30))   #TBD
+    name = db.Column(db.String(length=30))                                                              #TBD
+    surname = db.Column(db.String(length=30))                                                           #TBD
     email_address = db.Column(db.String(length=50), nullable=False, unique=True)
     g_email_address = db.Column(db.String(length=50), unique=True)
     password_hash = db.Column(db.String(length=60), nullable=False)

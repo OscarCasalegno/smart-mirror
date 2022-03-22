@@ -86,11 +86,3 @@ class EditMirrorForm(FlaskForm):
     location = StringField(label='Location:', validators=[Length(max=200)])
 
     submit = SubmitField(label='Save Changes')
-
-
-class PurchaseItemForm(FlaskForm):
-    submit = SubmitField(label='Purchase Item!')
-
-
-class SellItemForm(FlaskForm):
-    submit = SubmitField(label='Sell Item!')
