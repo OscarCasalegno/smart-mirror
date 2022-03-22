@@ -1,0 +1,48 @@
+{% extends 'base_per.html' %}
+{% block title %}
+    My Info
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <form method="POST" class="centered-form mt-reg">
+            {{ form.hidden_tag() }}
+            <h2 class="pb-2">Your Personal Information</h2>
+
+            <input type="text" class="form-control mt-3" value="{{ current_user.username }}" readonly>
+            <input type="text" class="form-control mt-3" value="{{ current_user.email_address }}" readonly>
+
+            <div class="row">
+                <div class="col-md">  <!-- col divide in base a quanti sono i fratelli; col-x da un valore -->
+                    {{ form.name(class="form-control mt-3", value=current_user.name, placeholder="Name")  }}
+                </div>
+                <div class="col-md">
+                    {{ form.surname(class="form-control mt-3", value=current_user.surname, placeholder="Surname")  }}
+                </div>
+            </div>
+
+            <p class="form-label">Google Account:</p>
+            {% if current_user.has_g_account() %}
+                <input type="text" class="form-control mt-3" value="{{ current_user.g_email_address }}" readonly>
+            {% else %}
+                <input type="text" class="form-control mt-3 text-center" value="-" readonly>
+            {% endif %}
+
+            <div class="row">
+                {% if not current_user.has_g_account() %}
+                    <div class="col-md center">
+                        <a class="btn btn-outline-dark full btn-lg btn-block mt-4 center" href="{{ url_for('g_link_page') }}" role="button" style="text-transform:none">
+                            <img width="20px" style="margin-bottom:3px; margin-right:5px" alt="Google sign-in" src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png" />
+                            Link with Google
+                        </a>
+                    </div>
+                {% endif %}
+                <div class="col-md center">
+                    {{ form.submit(class="btn btn-lg btn-block btn-primary mt-4 center full") }}
+                </div>
+            </div>
+        </form>
+        <div>
+        </div>
+    </div>
+    <div class="py-5"></div>
+{% endblock %}

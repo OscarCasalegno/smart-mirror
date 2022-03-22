@@ -1,0 +1,11 @@
+{% extends 'base_per.html' %}  <!--Da creare nuova base per backend!!-->
+{% block title %}
+    Personal Page
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <h1> Ciao {{ current_user.username }}</h1>
+        <h1> Specchi: {{ current_user.mirrors }}</h1>
+    </div>
+    <div class="py-5"></div>
+{% endblock %}

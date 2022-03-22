@@ -1,0 +1,39 @@
+<div class="agenda">
+  <div class="day-agenda">XXX_TODAY_XXX</div>
+  <ul class="events">
+      XXX_EVENTS_XXX
+  </ul>
+</div>
+
+<style>
+
+    .agenda{
+        background-color: black;
+        color:white;
+    }
+
+.event {display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "hour description travel";
+    font-family: "Lucida Console";
+    font-size: 0.8vw;
+}
+
+.hour { grid-area: hour; }
+
+.description { grid-area: description; }
+
+.travel { grid-area: travel; }
+
+.day-agenda { grid-area: day; text-align: center;font-family: "Lucida Console";
+    font-size: 1vw;}
+
+ul{
+    list-style: none;
+}
+
+</style>

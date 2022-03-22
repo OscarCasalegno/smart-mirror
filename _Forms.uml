@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>Python</ID>
+  <OriginalElement>#C:/Users/lucad/PycharmProjects/smart-mirror/website</OriginalElement>
+  <nodes>
+    <node x="0.0" y="272.0">website.forms.EditMirrorForm</node>
+    <node x="1550.0" y="272.0">website.forms.LoginForm</node>
+    <node x="716.0" y="272.0">website.forms.UpdateForm</node>
+    <node x="469.0" y="272.0">website.forms.LinkMirrorForm</node>
+    <node x="698.5" y="0.0">flask_wtf.form.FlaskForm</node>
+    <node x="245.0" y="217.0">website.forms.LayoutForm</node>
+    <node x="1217.0" y="227.5">website.forms.RegisterForm</node>
+    <node x="944.0" y="195.0">website.forms.RegisterMirrorForm</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="website.forms.LayoutForm" target="flask_wtf.form.FlaskForm" relationship="REALIZATION">
+      <point x="0.0" y="-105.0" />
+      <point x="347.0" y="170.0" />
+      <point x="820.0" y="170.0" />
+      <point x="0.0" y="72.5" />
+    </edge>
+    <edge source="website.forms.UpdateForm" target="flask_wtf.form.FlaskForm" relationship="REALIZATION">
+      <point x="0.0" y="-50.0" />
+      <point x="0.0" y="72.5" />
+    </edge>
+    <edge source="website.forms.LoginForm" target="flask_wtf.form.FlaskForm" relationship="REALIZATION">
+      <point x="0.0" y="-50.0" />
+      <point x="1648.5" y="170.0" />
+      <point x="820.0" y="170.0" />
+      <point x="0.0" y="72.5" />
+    </edge>
+    <edge source="website.forms.LinkMirrorForm" target="flask_wtf.form.FlaskForm" relationship="REALIZATION">
+      <point x="0.0" y="-50.0" />
+      <point x="582.5" y="170.0" />
+      <point x="820.0" y="170.0" />
+      <point x="0.0" y="72.5" />
+    </edge>
+    <edge source="website.forms.RegisterMirrorForm" target="flask_wtf.form.FlaskForm" relationship="REALIZATION">
+      <point x="0.0" y="-127.0" />
+      <point x="1070.5" y="170.0" />
+      <point x="820.0" y="170.0" />
+      <point x="0.0" y="72.5" />
+    </edge>
+    <edge source="website.forms.EditMirrorForm" target="flask_wtf.form.FlaskForm" relationship="REALIZATION">
+      <point x="0.0" y="-50.0" />
+      <point x="112.5" y="170.0" />
+      <point x="820.0" y="170.0" />
+      <point x="0.0" y="72.5" />
+    </edge>
+    <edge source="website.forms.RegisterForm" target="flask_wtf.form.FlaskForm" relationship="REALIZATION">
+      <point x="0.0" y="-94.5" />
+      <point x="1373.5" y="170.0" />
+      <point x="820.0" y="170.0" />
+      <point x="0.0" y="72.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.7843803056027164" showDependencies="false" x="873.5" y="224.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+  </Categories>
+</Diagram>
+

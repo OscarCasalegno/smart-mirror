@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='scripts/user.js') }}"></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/registered.css') }}">
+</head>
+
+<body>
+	<div class="container" >
+		<div class="top-left">{{ layout["top-left"]|safe }}</div>
+		<div class="center-left">{{ layout["center-left"]|safe }}</div>
+		<div class="bottom-left">{{ layout["bottom-left"]|safe }}</div>
+		<div class="top-right">{{ layout["top-right"]|safe }}</div>
+		<div class="center-right">{{ layout["center-right"]|safe }}</div>
+		<div class="bottom-right">{{ layout["bottom-right"]|safe }}</div>
+		<div class="reflection-top"></div>
+		<div class="reflection-center"></div>
+		<div class="reflection-bottom">
+			<div class="text-area" id="outer">
+				<div id="text">{{ layout["text"] }}</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<script type=text/javascript>
+showTime();
+
+resize_to_fit(10);
+
+setTimeout(() => {faceCheck(5000)}, 5000);
+</script>

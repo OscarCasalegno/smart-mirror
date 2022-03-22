@@ -1,0 +1,199 @@
+
+:root {
+    --logo: #cfcf14;
+}
+
+.centered {
+    /*Title*/
+    text-align: center;
+    padding: 32vh 0;
+}
+
+.full {
+    width: 100%;
+}
+
+.background-1 {
+    /*Background*/
+    background-image: url(mirror1.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    background-size: cover;
+    font-size: 130%;
+}
+
+.blue {
+    background-color: blue;
+    border: white;
+}
+
+.hover-red:hover {
+    background-color: var(--logo);
+    border-color: var(--logo);
+}
+
+.nav-custom {
+    font-size: 120%;
+    border-bottom: white solid 2pt;
+}
+
+.nav-custom:hover {
+    border-bottom: var(--logo) solid 2pt;
+    color: var(--logo);
+}
+
+.logo {
+    max-height: 7vh;
+    max-width: 7vh;
+    aspect-ratio: 1 / 1;
+}
+
+.title {
+    width: 100%;
+    padding: 6vh 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    font-family: 'Raleway','Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+}
+
+.title h1 {
+    font-weight: 100;
+    font-size: 250%;
+}
+
+.margin-top-2 {
+    margin-top: 2vh;
+}
+
+.video {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3/2;
+}
+
+.card-custom {
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+footer {
+    font-family: 'Raleway','Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', sans-serif;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    margin: 0;
+    padding: 0;
+    border-top: darkslategray dashed 1px;
+}
+
+footer p {
+    padding:1.6vh 0 0 1.5vh;
+}
+
+/*If width is < 576*/
+.mt-log {
+    margin-top: 10vh;
+}
+
+.mt-reg {
+    margin-top: 5vh;
+}
+
+/* Follow only if width is >= 768 */
+@media (min-width: 768px) {
+    .mt-log {
+        margin-top: 20vh;
+    }
+
+    .mt-reg {
+        margin-top: 15vh;
+    }
+}
+
+.readable {
+    background-color: rgba(0,0,0, 0.6);
+    width: 100%;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.centered-form {
+    width: 90%;
+    min-width: 0;
+    padding: 2.5rem;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.5s linear 0s, border 0.5s linear 0s;
+}
+
+.doubled-form {
+    width: 90%;
+    min-width: 0;
+    padding: 2rem 1.5rem;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.5s linear 0s, border 0.5s linear 0s;
+}
+
+.doubled-form:hover, .centered-form:hover {
+    background-color: rgba(252,252,252,1);
+    border-color: rgba(200,200,200,1);
+}
+
+strong:hover{
+    color: var(--logo);
+}
+
+.face {
+    border-radius: 30%;
+    aspect-ratio: 1;
+    width: 70%;
+    border: var(--logo) solid 3px;
+    margin-bottom: 3rem;
+}
+
+.form-label {
+    margin-top: 15pt;
+    margin-bottom: 0;
+    font-weight: bold;
+    color: darkslategray;
+}
+
+.table-margin {
+    margin-left: 2%;
+    margin-right: 2%;
+}
+
+/* Follow only if width is >= 768px */
+@media (min-width: 768px) {
+    .centered-form {
+        width: 50%;
+        min-width: 500pt;
+    }
+
+}
+
+@media (min-width: 1200px) {
+    .doubled-form {
+        min-width: 300pt;
+    }
+}
+
+@media (min-width: 1800px) {
+    .doubled-form {
+        width: 50%;
+        min-width: 500pt;
+    }
+}

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>Python</ID>
+  <OriginalElement>#C:/Users/lucad/PycharmProjects/smart-mirror/website</OriginalElement>
+  <nodes>
+    <node x="52.0" y="0.0">flask_login.mixins.UserMixin</node>
+    <node x="538.0" y="293.0">website.models.Relation</node>
+    <node x="390.0" y="67.5">Model</node>
+    <node x="340.0" y="271.0">website.models.Mirror</node>
+    <node x="0.0" y="216.0">website.models.User</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="website.models.Mirror" target="Model" relationship="REALIZATION">
+      <point x="0.0" y="-149.5" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="website.models.User" target="flask_login.mixins.UserMixin" relationship="REALIZATION">
+      <point x="0.0" y="-204.5" />
+      <point x="0.0" y="83.0" />
+    </edge>
+    <edge source="website.models.Relation" target="Model" relationship="REALIZATION">
+      <point x="0.0" y="-127.5" />
+      <point x="633.5" y="186.0" />
+      <point x="429.0" y="186.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+    <edge source="website.models.User" target="Model" relationship="REALIZATION">
+      <point x="0.0" y="-204.5" />
+      <point x="160.0" y="196.0" />
+      <point x="429.0" y="196.0" />
+      <point x="0.0" y="15.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic" zoom="0.9333333333333333" showDependencies="false" x="364.5" y="312.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+  </Categories>
+</Diagram>
+

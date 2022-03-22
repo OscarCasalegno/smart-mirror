@@ -1,0 +1,41 @@
+{% extends 'base_per.html' %}
+{% block title %}
+    My Mirrors
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <form method="POST" class="mt-reg centered-form">
+            {{ form.hidden_tag() }}
+            <h2 class="pb-2">Edit Mirror {{ relation.mirror.__repr__() }}</h2>
+            <p class="form-label">Information:</p>
+            <div class="row">
+                <div class="col-md">
+                    <input type="text" class="form-control mt-3" value="{{ relation.mirror.product_code }}" readonly>
+                </div>
+                <div class="col-md">
+                     <input type="text" class="form-control mt-3" value="{{ relation.mirror.secret_code if relation.ownership else "**********" }}" readonly>
+                </div>
+            </div>
+
+            {{ form.name(class="form-control mt-3", placeholder="Name", value=relation.mirror.name, disabled=(not relation.ownership)) }}
+            <p class="form-label">Location:</p>
+            {{ form.location(class="form-control mt-3", placeholder="Location", value=relation.mirror.location, disabled=(not relation.ownership)) }}
+
+            {% if  relation.ownership%}
+                <div class="row">
+                <div class="col-md">  <!-- col divide in base a quanti sono i fratelli; col-x da un valore -->
+                    {{ form.submit(class="btn btn-lg btn-block btn-primary mt-4 center full") }}
+                </div>
+                <div class="col-md">
+                    <a class="btn btn-lg btn-block btn-outline-dark mt-4 center full" href="{{ url_for('standard_layout_page', mirror_id=relation.mirror.id) }}">Standard Layout</a>
+                </div>
+            </div>
+
+            {% else %}
+                <a class="btn btn-lg btn-outline-secondary mt-4 center" href="{{ url_for('mirrors_page') }}">Return to List</a>
+            {% endif %}
+            </tr>
+        </form>
+    </div>
+    <div class="py-5"></div>
+{% endblock %}

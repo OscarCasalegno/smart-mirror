@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>Python</ID>
+  <OriginalElement>#C:/Users/lucad/PycharmProjects/smart-mirror/mirror/FacesClass.py</OriginalElement>
+  <nodes>
+    <node x="0.0" y="0.0">mirror.FacesClass.Faces</node>
+  </nodes>
+  <notes />
+  <edges />
+  <settings layout="Hierarchic" zoom="1.0" showDependencies="false" x="92.5" y="105.5" />
+  <SelectedNodes>
+    <node>mirror.FacesClass.Faces</node>
+  </SelectedNodes>
+  <Categories>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+  </Categories>
+</Diagram>
+
